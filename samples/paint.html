@@ -1,0 +1,78 @@
+<!--
+	Sample paint application to demonstrate multi touch handling of Dojo Pointers.
+	Simply change the device orientation to reset the canvas.
+	Number of active touch point depends on hardware capabilities and system option.
+	To use more than 3 touch points on iOS, disable Mutitasking Gestures in Settings > General.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+	<meta name="viewport"
+		  content="width=device-width, initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<!--
+	<script type="text/javascript" src="../../dojo/dojo.js" data-dojo-config="async: true"></script>
+	-->
+	<script>var require = {baseUrl:"../.."}</script>
+	<script type="text/javascript" src="../require/require.js"></script>
+
+	<title>Dojo Pointer: paint sample</title>
+	<style>
+		html,body {
+			height: 100%;
+			width: 100%;
+			margin: 0;
+			border: 0;
+			padding: 0;
+			overflow: hidden;
+			font-size: 100%;
+		}
+		#drawingArea {
+			height: 100%;
+			width: 100%;
+			margin: 0;
+			top: 0;
+			right: 0;
+			background-color: #000000;
+			position: absolute;
+		}
+	</style>
+	<script type="text/javascript">
+/*
+		require([
+			"dojo/domReady",
+			"pointer/pointerEvents"
+		], function (domReady, pointerEvents) {
+*/
+		require([
+			"pointer/require/domReady",
+			"pointer/pointerEvents"
+		], function (domReady, pointerEvents) {
+			domReady(function () {
+				var canvas = document.getElementById("drawingArea");
+				var context = context = canvas.getContext("2d");
+				canvas.height = window.innerHeight;
+				canvas.width = window.innerWidth;
+				// catch Pointer Move events and draw according to Pointer position
+				canvas.addEventListener(pointerEvents.events.pointermove, function (event) {
+					if (event.buttons > 0){
+						context.fillStyle = color = pointerEvents.PointerColor.get(event.pointerId);
+						context.fillRect(event.clientX, event.clientY, 5, 5);
+					}
+				});
+				// reset canvas on orientation change
+				window.addEventListener("resize", function () {
+					canvas.height = window.innerHeight;
+					canvas.width = window.innerWidth;
+				});
+				// disable browser default actions
+				pointerEvents.setTouchAction(canvas, "none");
+			});
+		});
+	</script>
+</head>
+<body>
+<canvas id="drawingArea">Canvas not supported?</canvas>
+</body>
+</html>

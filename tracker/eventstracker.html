@@ -1,0 +1,231 @@
+<!--
+This tools tracks and displays dojo pointer, mouse, touch, MS Pointer events in many situations.
+You can enable/disable move events prevent defaults, enable/disable dojo pointers, chose the events you want
+to display. Display log has 50 entry max.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+	<!-- We want to be able to zoom
+	<meta name="viewport"
+		  content="width=device-width,height=device-height,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+	-->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<link rel="stylesheet" type="text/css" href="./eventstracker.css">
+	<script src="eventstracker.js"></script>
+	<!--
+	<script type="text/javascript" src="../../dojo/dojo.js" data-dojo-config="async: true"></script>
+	-->
+	<script>var require = {baseUrl:"../.."}</script>
+	<script type="text/javascript" src="../require/require.js"></script>
+	<title>Dojo Pointer: Events Tracker</title>
+
+	<script type="text/javascript">
+/*
+		require([
+			"dojo/domReady",
+			"dojo/parser",
+			"pointer/pointerEvents"
+		], function (domReady, parser, pointerEvents) {
+*/
+	require([
+		"pointer/require/domReady",
+		"pointer/pointerEvents"
+	], function (domReady, pointerEvents) {
+			domReady(function () {
+				try {
+					// element on which Pointer listeners are be added
+					var targetElement = document.getElementById('base1');
+					var checkboxRef = document.getElementById("enableCustomEvents");
+					checkboxRef.addEventListener("change", function () {
+						(checkboxRef.checked) ? pointerEvents.enable(targetElement) : pointerEvents.disable(targetElement);
+					});
+					// allow to set touch action on tracker elements
+					[	["touchAction00", "base1"],
+						["touchAction01", "leftBlock"],
+						["touchAction02", "middleBlock"] ,
+						["touchAction03", "rightBlock"]
+					].forEach(
+							function (item) {
+								var checkboxRef = document.getElementById(item[0]);
+								var elementRef = document.getElementById(item[1]);
+								checkboxRef.addEventListener("change", function () {
+									if (checkboxRef.checked) {
+										tracker.log("=> set touch-action = none", item[1]);
+										pointerEvents.setTouchAction(elementRef,"none");
+									} else {
+										tracker.log("=> set touch-action = auto", item[1]);
+										pointerEvents.setTouchAction(elementRef,"auto");
+									}
+								});
+							});
+					// set Pointer capture on element captureBtn
+					(function () {
+						var elementRef = document.getElementById('captureBtn');
+						elementRef.addEventListener("dojoPointerDown", function (e) {
+							pointerEvents.setPointerCapture(e.pointerId, e.target);
+						});
+					})();
+					alert("tracker is ready.");
+				} catch (err) {
+					alert("ERROR: " + err);
+				}
+			});
+		});
+	</script>
+</head>
+<body>
+<div id="eventlog">
+	<div id="ctrlBar">
+		<div id="options">
+			<div id="buttons" class="ctrlContainer">
+				<button id="clearLogTable">clear</button>
+				<button id="infos">infos</button>
+				<input id="enableCustomEvents" type="checkbox" checked class="whiteCheckbox">Enable Pointers
+			</div>
+			<div id="trackEvents" class="ctrlContainer">Events:
+				<label><input id="customEvents" type="checkbox" checked class="whiteCheckbox"/>dojo Pointers</label>
+				<label><input id="mouseEvents" type="checkbox" class="whiteCheckbox"/>Mouse</label>
+				<label id="msEventsLabel"><input id="msEvents" type="checkbox" class="whiteCheckbox"/>MSPointer</label>
+				<label id="touchEventsLabel"><input id="touchEvents" type="checkbox" class="whiteCheckbox"/>Touch</label>
+			</div>
+			<div id="overflow" class="ctrlContainer">overflow=auto:
+				<label><input id="overflow01" type="checkbox" class="redCheckbox"/>left</label>
+				<label><input id="overflow02" type="checkbox" class="yellowCheckbox"/>middle</label>
+				<label><input id="overflow03" type="checkbox" class="blueCheckbox"/>right</label>
+			</div>
+			<div id="preventDefault" class="ctrlContainer">Prevent defaults:
+				<label><input id="preventDefault01" type="checkbox" class="redCheckbox"/>left</label>
+				<label><input id="preventDefault02" type="checkbox" class="yellowCheckbox"/>middle</label>
+				<label><input id="preventDefault03" type="checkbox" class="blueCheckbox"/>right</label>
+			</div>
+			<div id="touchAction" class="ctrlContainer">touch-action=none:
+				<label><input id="touchAction00" type="checkbox" class="whiteCheckbox"/>base1</label>
+				<label><input id="touchAction01" type="checkbox" class="redCheckbox"/>left</label>
+				<label><input id="touchAction02" type="checkbox" class="yellowCheckbox"/>middle</label>
+				<label><input id="touchAction03" type="checkbox" class="blueCheckbox"/>right</label>
+			</div>
+		</div>
+	</div>
+	<div id="logscroll">
+		<table id="eventtable">
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+</div>
+<div id="base1">
+	<div id="base2">
+		<canvas id="leftBlock"></canvas>
+		<div id="rightBlock">RightBlock (div)<button id="captureBtn">Button</button></div>
+	</div>
+	<div id="middleBlock">MiddleBlock (div)</div>
+</div>
+<script>
+	"use strict";
+	tracker.setTableLogId("eventtable");
+	tracker.setTrackerAreaId("base1");
+	var customActionName = "dojoTouchAction";
+	// button handler to clear events log table
+	document.getElementById("clearLogTable").addEventListener("click", function () {
+		tracker.clear();
+	});
+	// button handler to display user agent info
+	document.getElementById("infos").addEventListener("click", function () {
+		tracker.infos();
+	});
+	// checkbox handlers to enable/disable event tracking
+	(function () { // dojo Pointer events tracking
+		var checkboxRef = document.getElementById("customEvents");
+		checkboxRef.addEventListener("change", function () {
+			tracker.trackCustomEvents = (checkboxRef.checked);
+			tracker.log("==> tracking", " dojo Pointer Events: ", tracker.trackCustomEvents);
+		});
+	})();
+	(function () { // MSPointer events tracking
+		if (window.navigator.msPointerEnabled) {
+			var checkboxRef = document.getElementById("msEvents");
+			checkboxRef.addEventListener("change", function () {
+				tracker.trackMSPointerEvents = (checkboxRef.checked);
+				tracker.log("==> tracking", " MS Pointer Events: ", tracker.trackMSPointerEvents);
+			});
+		} else {
+			document.getElementById("msEventsLabel").style.display = "none";
+		}
+	})();
+	(function () { // Mouse events tracking
+		var checkboxRef = document.getElementById("mouseEvents");
+		checkboxRef.addEventListener("change", function () {
+			tracker.trackMouseEvents = (checkboxRef.checked);
+			tracker.log("==> tracking", " mouse events: ", tracker.trackMouseEvents);
+		});
+	})();
+	(function () { // Touch events tracking
+		if ("ontouchstart" in document) {
+			var checkboxRef = document.getElementById("touchEvents");
+			checkboxRef.addEventListener("change", function () {
+				tracker.trackTouchEvents = (checkboxRef.checked);
+				tracker.log("==> tracking", " touch events: ", tracker.trackTouchEvents);
+			});
+		} else {
+			document.getElementById("touchEventsLabel").style.display = "none";
+		}
+	})();
+	// allow to set CSS overflow on traker elements
+	(function () {
+		[
+			["overflow01", "leftBlock"],
+			["overflow02", "middleBlock"] ,
+			["overflow03", "rightBlock"]
+		].forEach(
+				function (item) {
+					var checkboxRef = document.getElementById(item[0]);
+					checkboxRef.addEventListener("change", function () {
+						tracker.overflowOnElement(item[1], (checkboxRef.checked));
+					});
+				}
+		);
+	})();
+	// allow to set prevent default on touch start/move on tracker elements
+	(function () {
+		if ("ontouchstart" in document) {
+			[
+				["preventDefault01", "leftBlock"],
+				["preventDefault02", "middleBlock"] ,
+				["preventDefault03", "rightBlock"]
+			].forEach(
+					function (item) {
+						var checkboxRef = document.getElementById(item[0]);
+						checkboxRef.addEventListener("change", function () {
+							tracker.preventDefaultOnElement(item[1], (checkboxRef.checked));
+						});
+					});
+		} else {
+			document.getElementById("preventDefault").style.display = "none";
+		}
+	})();
+	// fill right panel to test overflow scroll
+	(function () {
+		var elementRef = document.getElementById('rightBlock');
+		elementRef.innerHTML = elementRef.innerHTML + "<ul>";
+		for (var i = 0; i <= 300; i++) {
+			elementRef.innerHTML = elementRef.innerHTML + "<li id=\'item_" + (i) + "\'>" + elementRef.id + "_" + i + "</li>";
+		}
+		elementRef.innerHTML = elementRef.innerHTML + "<li>END</li>";
+		elementRef.innerHTML = elementRef.innerHTML + "</ul>";
+	})();
+	// display text on canvas
+	(function () {
+		var canvas = document.getElementById('leftBlock');
+		canvas.height = window.innerHeight;
+		canvas.width = window.innerWidth;
+		var context = canvas.getContext("2d");
+		context.font = '25pt Courrier';
+		context.fillText("leftBlock (canvas)", 30, 30);
+	})();
+	// start events tracking
+	tracker.startTracking();
+</script>
+</body>
+</html>

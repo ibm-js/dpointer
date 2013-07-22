@@ -288,7 +288,7 @@ define([
 				console.log("ERROR> targetElement null or undefined (event: " + event.type + ")");
 				return false;
 			}
-			if (!(targetElement.dispatchEvent )) throw "dispatchEvent not supported on targetElement";
+			if (!(targetElement.dispatchEvent )) throw new Error("dispatchEvent not supported on targetElement");
 			return targetElement.dispatchEvent(event);
 		};
 		/**

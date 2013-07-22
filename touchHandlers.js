@@ -196,7 +196,7 @@ define([
 		 * @returns {HTMLElement}
 		 */
 		function elementFromTouch(touch) {
-			return window.document.elementFromPoint(touch.pageX, touch.pageY); // careful: different behaviors #15821
+			return touch.target.ownerDocument.elementFromPoint(touch.pageX, touch.pageY); // careful: different behaviors #15821
 		}
 
 		/**

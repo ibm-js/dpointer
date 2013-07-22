@@ -108,7 +108,7 @@ define([
 			// Mouse Event spec
 			// http://www.w3.org/TR/2001/WD-DOM-Level-3-Events-20010823/events.html#Events-eventgroupings-mouseevents
 			// DOM4 Event: https://dvcs.w3.org/hg/d4e/raw-file/tip/source_respec.htm
-			var e = null;
+			var e;
 			if (!events.DOM4_EVENT_SUPPORT) {
 				e = document.createEvent('MouseEvents');
 				e.initMouseEvent(pointerType,

@@ -187,7 +187,6 @@ define([
 		 * @returns {Event}
 		 */
 		events.createSyntheticClick = function (sourceEvent, dblClick) {
-			 dblClick = dblClick || false;
 			var e = document.createEvent('MouseEvents');
 			if (e.isTrusted === undefined) { // Android 4.1.1 does not implement isTrusted
 				Object.defineProperty(e, "isTrusted", {

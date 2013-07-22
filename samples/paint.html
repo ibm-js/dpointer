@@ -46,29 +46,27 @@
 		], function (domReady, pointerEvents) {
 */
 		require([
-			"pointer/require/domReady",
-			"pointer/pointerEvents"
-		], function (domReady, pointerEvents) {
-			domReady(function () {
-				var canvas = document.getElementById("drawingArea");
-				var context = context = canvas.getContext("2d");
+			"pointer/pointerEvents",
+			"pointer/require/domReady!"
+		], function (pointerEvents) {
+			var canvas = document.getElementById("drawingArea");
+			var context = context = canvas.getContext("2d");
+			canvas.height = window.innerHeight;
+			canvas.width = window.innerWidth;
+			// catch Pointer Move events and draw according to Pointer position
+			canvas.addEventListener(pointerEvents.events.pointermove, function (event) {
+				if (event.buttons > 0){
+					context.fillStyle = color = pointerEvents.PointerColor.get(event.pointerId);
+					context.fillRect(event.clientX, event.clientY, 5, 5);
+				}
+			});
+			// reset canvas on orientation change
+			window.addEventListener("resize", function () {
 				canvas.height = window.innerHeight;
 				canvas.width = window.innerWidth;
-				// catch Pointer Move events and draw according to Pointer position
-				canvas.addEventListener(pointerEvents.events.pointermove, function (event) {
-					if (event.buttons > 0){
-						context.fillStyle = color = pointerEvents.PointerColor.get(event.pointerId);
-						context.fillRect(event.clientX, event.clientY, 5, 5);
-					}
-				});
-				// reset canvas on orientation change
-				window.addEventListener("resize", function () {
-					canvas.height = window.innerHeight;
-					canvas.width = window.innerWidth;
-				});
-				// disable browser default actions
-				pointerEvents.setTouchAction(canvas, "none");
 			});
+			// disable browser default actions
+			pointerEvents.setTouchAction(canvas, "none");
 		});
 	</script>
 </head>

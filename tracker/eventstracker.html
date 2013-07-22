@@ -30,48 +30,46 @@ to display. Display log has 50 entry max.
 		], function (domReady, parser, pointerEvents) {
 */
 	require([
-		"pointer/require/domReady",
-		"pointer/pointerEvents"
-	], function (domReady, pointerEvents) {
-			domReady(function () {
-				try {
-					// element on which Pointer listeners are be added
-					var targetElement = document.getElementById('base1');
-					var checkboxRef = document.getElementById("enableCustomEvents");
-					checkboxRef.addEventListener("change", function () {
-						(checkboxRef.checked) ? pointerEvents.enable(targetElement) : pointerEvents.disable(targetElement);
-					});
-					// allow to set touch action on tracker elements
-					[	["touchAction00", "base1"],
-						["touchAction01", "leftBlock"],
-						["touchAction02", "middleBlock"] ,
-						["touchAction03", "rightBlock"]
-					].forEach(
-							function (item) {
-								var checkboxRef = document.getElementById(item[0]);
-								var elementRef = document.getElementById(item[1]);
-								checkboxRef.addEventListener("change", function () {
-									if (checkboxRef.checked) {
-										tracker.log("=> set touch-action = none", item[1]);
-										pointerEvents.setTouchAction(elementRef,"none");
-									} else {
-										tracker.log("=> set touch-action = auto", item[1]);
-										pointerEvents.setTouchAction(elementRef,"auto");
-									}
-								});
+		"pointer/pointerEvents",
+		"pointer/require/domReady!"
+	], function (pointerEvents) {
+			try {
+				// element on which Pointer listeners are be added
+				var targetElement = document.getElementById('base1');
+				var checkboxRef = document.getElementById("enableCustomEvents");
+				checkboxRef.addEventListener("change", function () {
+					(checkboxRef.checked) ? pointerEvents.enable(targetElement) : pointerEvents.disable(targetElement);
+				});
+				// allow to set touch action on tracker elements
+				[	["touchAction00", "base1"],
+					["touchAction01", "leftBlock"],
+					["touchAction02", "middleBlock"] ,
+					["touchAction03", "rightBlock"]
+				].forEach(
+						function (item) {
+							var checkboxRef = document.getElementById(item[0]);
+							var elementRef = document.getElementById(item[1]);
+							checkboxRef.addEventListener("change", function () {
+								if (checkboxRef.checked) {
+									tracker.log("=> set touch-action = none", item[1]);
+									pointerEvents.setTouchAction(elementRef,"none");
+								} else {
+									tracker.log("=> set touch-action = auto", item[1]);
+									pointerEvents.setTouchAction(elementRef,"auto");
+								}
 							});
-					// set Pointer capture on element captureBtn
-					(function () {
-						var elementRef = document.getElementById('captureBtn');
-						elementRef.addEventListener("dojoPointerDown", function (e) {
-							pointerEvents.setPointerCapture(e.pointerId, e.target);
 						});
-					})();
-					alert("tracker is ready.");
-				} catch (err) {
-					alert("ERROR: " + err);
-				}
-			});
+				// set Pointer capture on element captureBtn
+				(function () {
+					var elementRef = document.getElementById('captureBtn');
+					elementRef.addEventListener("dojoPointerDown", function (e) {
+						pointerEvents.setPointerCapture(e.pointerId, e.target);
+					});
+				})();
+				alert("tracker is ready.");
+			} catch (err) {
+				alert("ERROR: " + err);
+			}
 		});
 	</script>
 </head>

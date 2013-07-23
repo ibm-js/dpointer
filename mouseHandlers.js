@@ -46,6 +46,9 @@ define([
 			hasCapture: function(){
 				return !!(this._captureTarget);
 			},
+			identifyTarget: function (nonCapturedElement) {
+				return (this._captureTarget) || nonCapturedElement;
+			},
 			releaseCapture: function(targetElement, implicit){
 				// 1. check if pointerId is active, otw throw DOMException with the name InvalidPointerId.
 				if (!this._lastNativeEvent) throw "InvalidPointerId";
@@ -137,7 +140,7 @@ define([
 			if (isScrolling) return;
 			var syntheticEvent;
 			syntheticEvent = createPointer(events.pointermove, e);
-			events.dispatchEvent(e.target, syntheticEvent);
+			events.dispatchEvent(MouseTracker.identifyTarget(e.target), syntheticEvent);
 			MouseTracker.update(e);
 		}
 
@@ -146,7 +149,7 @@ define([
 		 * @param e
 		 */
 		function mouseout(e) {
-			if (isScrolling) return;
+			if (isScrolling  || MouseTracker.hasCapture()) return;
 			if (e.relatedTarget) {
 				var syntheticEvent;
 				syntheticEvent = createPointer(events.pointerout, e);
@@ -160,7 +163,7 @@ define([
 		 * @param e
 		 */
 		function mouseover(e) {
-			if (isScrolling) return;
+			if (isScrolling || MouseTracker.hasCapture()) return;
 			if (e.relatedTarget) {
 				var syntheticEvent;
 				syntheticEvent = createPointer(events.pointerover, e);

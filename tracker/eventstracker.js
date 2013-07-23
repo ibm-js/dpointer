@@ -167,6 +167,9 @@ tracker.trackTouchEvents = false;
 			case "contextmenu":
 			case "click":
 			case "dblclick":
+				if( type == "click" || type == "dblclick"){
+					type = type + "(" + (event.isTrusted?'n':'s') + ")"; // n for native event, s for synthetic event
+				}
 				log(event.target.id, type,
 					"clientX:" + event.clientX,
 					"clientY:" + event.clientY,
@@ -273,15 +276,22 @@ tracker.trackTouchEvents = false;
 			var row = _tableLogElt.insertRow(0);
 			var pid = arguments[7];
 			if(pid && (pid!="")) {
-				row.style.backgroundColor = PointerColor.get(pid);
+				row.style.color = PointerColor.get(pid);
+				row.style.backgroundColor = "#888888";
 			}
 
-			var i, cell;
+			var i, cell, arg;
 			cell = row.insertCell(0);
 			cell.innerHTML = String(getDelay()) + "ms";
 			cell.style = "text-align:right;";
 			for (i = arguments.length - 1; i >= 0; i--) {
-				row.insertCell(1).innerHTML = arguments[i];
+				arg = arguments[i];
+				if( i == 1 && (arg.indexOf("click") == 0 || arg.indexOf("dblclick") == 0) ){
+					row.style.color = "#FF0000";
+					cell = row.insertCell(1).innerHTML = "<i>" + arg + "</i>";
+				}else{
+					cell = row.insertCell(1).innerHTML = arg;
+				}
 			}
 			// fill up to 10 cells (_minCell2Display default)
 			for (i = (arguments.length + 1); i < _minCell2Display; i++) {

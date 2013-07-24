@@ -286,7 +286,7 @@ tracker.trackTouchEvents = false;
 			cell.style = "text-align:right;";
 			for (i = arguments.length - 1; i >= 0; i--) {
 				arg = arguments[i];
-				if( i == 1 && (arg.indexOf("click") == 0 || arg.indexOf("dblclick") == 0) ){
+				if( i == 1 && (arg.length > 0) && (arg.indexOf("click") == 0 || arg.indexOf("dblclick") == 0) ){
 					row.style.color = "#FF0000";
 					cell = row.insertCell(1).innerHTML = "<i>" + arg + "</i>";
 				}else{

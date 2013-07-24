@@ -37,8 +37,15 @@ to display. Display log has 50 entry max.
 				// element on which Pointer listeners are be added
 				var targetElement = document.getElementById('base1');
 				var checkboxRef = document.getElementById("enableCustomEvents");
+				checkboxRef.checked = true;
 				checkboxRef.addEventListener("change", function () {
-					(checkboxRef.checked) ? pointerEvents.enable(targetElement) : pointerEvents.disable(targetElement);
+					if(checkboxRef.checked){
+						tracker.log("=> enable Dojo Pointers");
+						pointerEvents.enable(targetElement);
+					}else{
+						tracker.log("=> disable Dojo Pointers");
+						pointerEvents.disable(targetElement);
+					}
 				});
 				// allow to set touch action on tracker elements
 				[	["touchAction00", "base1"],
@@ -48,6 +55,7 @@ to display. Display log has 50 entry max.
 				].forEach(
 						function (item) {
 							var checkboxRef = document.getElementById(item[0]);
+							checkboxRef.checked = false;
 							var elementRef = document.getElementById(item[1]);
 							checkboxRef.addEventListener("change", function () {
 								if (checkboxRef.checked) {
@@ -124,7 +132,7 @@ to display. Display log has 50 entry max.
 	"use strict";
 	tracker.setTableLogId("eventtable");
 	tracker.setTrackerAreaId("base1");
-	var customActionName = "dojoTouchAction";
+
 	// button handler to clear events log table
 	document.getElementById("clearLogTable").addEventListener("click", function () {
 		tracker.clear();
@@ -136,6 +144,7 @@ to display. Display log has 50 entry max.
 	// checkbox handlers to enable/disable event tracking
 	(function () { // dojo Pointer events tracking
 		var checkboxRef = document.getElementById("customEvents");
+		checkboxRef.checked = tracker.trackCustomEvents;
 		checkboxRef.addEventListener("change", function () {
 			tracker.trackCustomEvents = (checkboxRef.checked);
 			tracker.log("==> tracking", " dojo Pointer Events: ", tracker.trackCustomEvents);
@@ -144,6 +153,7 @@ to display. Display log has 50 entry max.
 	(function () { // MSPointer events tracking
 		if (window.navigator.msPointerEnabled) {
 			var checkboxRef = document.getElementById("msEvents");
+			checkboxRef.checked = tracker.trackMSPointerEvents;
 			checkboxRef.addEventListener("change", function () {
 				tracker.trackMSPointerEvents = (checkboxRef.checked);
 				tracker.log("==> tracking", " MS Pointer Events: ", tracker.trackMSPointerEvents);
@@ -154,6 +164,7 @@ to display. Display log has 50 entry max.
 	})();
 	(function () { // Mouse events tracking
 		var checkboxRef = document.getElementById("mouseEvents");
+		checkboxRef.checked = tracker.trackMouseEvents;
 		checkboxRef.addEventListener("change", function () {
 			tracker.trackMouseEvents = (checkboxRef.checked);
 			tracker.log("==> tracking", " mouse events: ", tracker.trackMouseEvents);
@@ -162,6 +173,7 @@ to display. Display log has 50 entry max.
 	(function () { // Touch events tracking
 		if ("ontouchstart" in document) {
 			var checkboxRef = document.getElementById("touchEvents");
+			checkboxRef.checked = tracker.trackTouchEvents;
 			checkboxRef.addEventListener("change", function () {
 				tracker.trackTouchEvents = (checkboxRef.checked);
 				tracker.log("==> tracking", " touch events: ", tracker.trackTouchEvents);
@@ -179,6 +191,7 @@ to display. Display log has 50 entry max.
 		].forEach(
 				function (item) {
 					var checkboxRef = document.getElementById(item[0]);
+					checkboxRef.checked = false;
 					checkboxRef.addEventListener("change", function () {
 						tracker.overflowOnElement(item[1], (checkboxRef.checked));
 					});
@@ -195,6 +208,7 @@ to display. Display log has 50 entry max.
 			].forEach(
 					function (item) {
 						var checkboxRef = document.getElementById(item[0]);
+						checkboxRef.checked = false;
 						checkboxRef.addEventListener("change", function () {
 							tracker.preventDefaultOnElement(item[1], (checkboxRef.checked));
 						});

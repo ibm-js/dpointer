@@ -130,11 +130,14 @@ define([
 			} else {
 				e = new MouseEvent(pointerType, props);
 			}
-			//
-			if (e.buttons === undefined) {
+			if (! "buttons" in e) {
 				Object.defineProperty(e, "buttons", {
 					value: (props.buttons || 0),
 					enumerable: true, writable: false});
+			} else {
+				Object.defineProperty(e, 'buttons', {
+					get: function(){ return props.buttons },
+					enumerable: true});
 			}
 			// Pointer events spec
 			// http://www.w3.org/TR/pointerevents/#pointerevent-interface

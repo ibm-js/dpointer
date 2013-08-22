@@ -224,7 +224,8 @@ tracker.trackTouchEvents = false;
 					(event.isPrimary)?"Primary":"",
 					"btn:" + (event.button),
 					"btns:" + ((event.buttons!==undefined)?event.buttons:"n/a"),
-					"which:" + ((event.which!==undefined)?event.which:"n/a")
+					"which:" + ((event.which!==undefined)?event.which:"n/a"),
+					"type:" + (event.pointerType)
 				);
 				break;
 			default:

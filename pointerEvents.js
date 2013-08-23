@@ -85,7 +85,7 @@ define([
 				if (events.hasMSPointerEnabled()) {
 					targetElement.style["-ms-touch-action"] = actionType;
 				} else {
-					targetElement[events.TOUCH_ACTION] = actionType;
+					targetElement.setAttribute(events.TOUCH_ACTION, actionType);
 				}
 			}
 		};

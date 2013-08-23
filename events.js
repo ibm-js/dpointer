@@ -74,7 +74,7 @@ define([
 			var nodeValue = events.TOUCH_ACTION_AUTO;
 			// find ancestors with "touch action" and define behavior accordingly.
 			do {
-				switch (targetNode[events.TOUCH_ACTION]) {
+				switch (targetNode.getAttribute && targetNode.getAttribute(events.TOUCH_ACTION)) {
 					case "auto":
 						nodeValue = nodeValue | events.TOUCH_ACTION_AUTO;
 						break;

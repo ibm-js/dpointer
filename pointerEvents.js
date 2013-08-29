@@ -24,6 +24,10 @@ define([
 
 		pointerEvents.events = events;
 
+		var ua = navigator.userAgent;
+		var isChrome = /chrome/i.test(ua);
+		var isMobile = /(mobile)|(android)/i.test(ua);
+
 		/**
 		 * Enable Pointer events. Register native event handlers. Importing this module automatically register native
 		 * event handlers on window.document.
@@ -42,8 +46,17 @@ define([
 					msPointerHandlers.registerHandlers(targetElement);
 				} else {
 					if (events.hasTouchEvents()) {
-						console.log("Registering touch events handlers...");
-						touchHandlers.registerHandlers(targetElement);
+						if(!isMobile){
+							console.log("Registering mouse events handlers...");
+							mouseHandlers.registerHandlers(targetElement);
+							if( isChrome ){
+								console.log("Registering touch events handlers...");
+								touchHandlers.registerHandlers(targetElement);
+							}
+						} else {
+							console.log("Registering touch events handlers...");
+							touchHandlers.registerHandlers(targetElement);
+						}
 					} else {
 						console.log("Registering mouse events handlers...");
 						mouseHandlers.registerHandlers(targetElement);

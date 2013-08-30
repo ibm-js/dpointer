@@ -48,15 +48,15 @@
 		require([
 			"pointer/pointerEvents",
 			"pointer/domReady/domReady!"
-		], function (pointerEvents) {
+		], function (pointers) {
 			var canvas = document.getElementById("drawingArea");
-			var context = context = canvas.getContext("2d");
+			var context = canvas.getContext("2d");
 			canvas.height = window.innerHeight;
 			canvas.width = window.innerWidth;
 			// catch Pointer Move events and draw according to Pointer position
-			canvas.addEventListener(pointerEvents.events.pointermove, function (event) {
+			canvas.addEventListener("dojoPointerMove", function (event) {
 				if (event.buttons > 0){
-					context.fillStyle = color = pointerEvents.PointerColor.get(event.pointerId);
+					context.fillStyle = pointers.PointerColor.get(event.pointerId);
 					context.fillRect(event.clientX, event.clientY, 5, 5);
 				}
 			});
@@ -65,12 +65,10 @@
 				canvas.height = window.innerHeight;
 				canvas.width = window.innerWidth;
 			});
-			// disable browser default actions
-			pointerEvents.setTouchAction(canvas, "none");
 		});
 	</script>
 </head>
 <body>
-<canvas id="drawingArea">Canvas not supported?</canvas>
+<canvas id="drawingArea" dojoTouchAction="none">Canvas not supported?</canvas>
 </body>
 </html>

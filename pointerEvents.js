@@ -169,6 +169,25 @@ define([
 			}
 		};
 
+		// rule to define CSS (touch-action or -ms-touch-action) when dojoTouchAction attribute is set on Elements
+		function insertTouchActionCSSRule(attributeName, styleName){
+			var styleElement = document.createElement('style');
+			styleElement.textContent = 	'[' + attributeName + '="none"]  { ' + styleName + ': none; }' +
+				'[' + attributeName + '="auto"]  { ' + styleName + ': auto; }' +
+				'[' + attributeName + '="pan-x"] { ' + styleName + ': pan-x; }' +
+				'[' + attributeName + '="pan-y"] { ' + styleName + ': pan-y; }' +
+				'[' + attributeName + '="pan-x pan-y"],[' + styleName + '="pan-y pan-x"] ' +
+					'{ ' + styleName + ': pan-x pan-y; }';
+			var head = document.head;
+			head.insertBefore(styleElement, head.firstChild);
+		}
+		if (events.hasPointerEnabled()) {
+			insertTouchActionCSSRule(events.TOUCH_ACTION, "touch-action");
+		}
+		if (events.hasMSPointerEnabled()) {
+			insertTouchActionCSSRule(events.TOUCH_ACTION, "-ms-touch-action");
+		}
+
 		pointerEvents.enable();
 
 		return pointerEvents;

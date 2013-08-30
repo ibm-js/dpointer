@@ -15,7 +15,7 @@
 	<script type="text/javascript" src="../../dojo/dojo.js" data-dojo-config="async: true"></script>
 	-->
 	<script>var require = {baseUrl:"../.."}</script>
-	<script type="text/javascript" src="../require/require.js"></script>
+	<script type="text/javascript" src="../requirejs/require.js"></script>
 
 	<title>Dojo Pointer: paint sample</title>
 	<style>
@@ -47,7 +47,7 @@
 */
 		require([
 			"pointer/pointerEvents",
-			"pointer/require/domReady!"
+			"pointer/domReady/domReady!"
 		], function (pointerEvents) {
 			var canvas = document.getElementById("drawingArea");
 			var context = context = canvas.getContext("2d");

@@ -20,7 +20,7 @@ to display. Display log has 50 entry max.
 	<script type="text/javascript" src="../../dojo/dojo.js" data-dojo-config="async: true"></script>
 	-->
 	<script>var require = {baseUrl:"../.."}</script>
-	<script type="text/javascript" src="../require/require.js"></script>
+	<script type="text/javascript" src="../requirejs/require.js"></script>
 	<title>Dojo Pointer: Events Tracker</title>
 
 	<script type="text/javascript">
@@ -33,7 +33,7 @@ to display. Display log has 50 entry max.
 */
 	require([
 		"pointer/pointerEvents",
-		"pointer/require/domReady!"
+		"pointer/domReady/domReady!"
 	], function (pointerEvents) {
 			try {
 				// element on which Pointer listeners are be added

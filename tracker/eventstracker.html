@@ -73,7 +73,7 @@ to display. Display log has 50 entry max.
 				(function () {
 					var elementRef = document.getElementById('captureBtn');
 					elementRef.addEventListener("dojoPointerDown", function (e) {
-						pointerEvents.setPointerCapture(e.pointerId, e.target);
+						pointerEvents.setPointerCapture(e.target, e.pointerId);
 					});
 				})();
 				alert("tracker is ready.");

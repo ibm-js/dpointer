@@ -106,10 +106,10 @@ define([
 		/**
 		 * Set pointer capture on a DOM element.
 		 *
-		 * @param pointerId Pointer ID
 		 * @param targetElement DOM element
+		 * @param pointerId Pointer ID
 		 */
-		pointerEvents.setPointerCapture = function (pointerId, targetElement) {
+		pointerEvents.setPointerCapture = function (targetElement, pointerId) {
 			console.log("setPointerCapture [pointer:" + pointerId + ", target:" + targetElement.id);
 			if (!this._targetElement) return false;
 			if (events.hasPointerEnabled()) {
@@ -118,11 +118,10 @@ define([
 				if (events.hasMSPointerEnabled()) {
 					return targetElement.msSetPointerCapture(pointerId);
 				} else {
-					var syntheticEvent, target;
-					if (events.hasTouchEvents()) {
-						return touchHandlers.setPointerCapture(pointerId, targetElement);
+					if (pointerId == 1) {
+						return mouseHandlers.setPointerCapture(targetElement);
 					} else {
-						return mouseHandlers.setPointerCapture(pointerId, targetElement);
+						return touchHandlers.setPointerCapture(targetElement, pointerId);
 					}
 				}
 			}
@@ -131,10 +130,10 @@ define([
 		/**
 		 * Unset pointer capture on a DOM element.
 		 *
-		 * @param pointerId Pointer ID
 		 * @param targetElement DOM element
+		 * @param pointerId Pointer ID
 		 */
-		pointerEvents.releasePointerCapture = function (pointerId, targetElement) {
+		pointerEvents.releasePointerCapture = function (targetElement, pointerId) {
 			console.log("releasePointerCapture [pointer:" + pointerId + ", target:" + targetElement.id);
 			if (!this._targetElement) return false;
 			if (events.hasPointerEnabled()) {
@@ -143,10 +142,10 @@ define([
 				if (events.hasMSPointerEnabled()) {
 					return targetElement.msReleasePointerCapture(pointerId);
 				} else {
-					if (events.hasTouchEvents()) {
-						return touchHandlers.releasePointerCapture(pointerId, targetElement);
+					if (pointerId == 1) {
+						return mouseHandlers.releasePointerCapture(targetElement);
 					} else {
-						return mouseHandlers.releasePointerCapture(pointerId, targetElement);
+						return touchHandlers.releasePointerCapture(targetElement, pointerId);
 					}
 				}
 			}

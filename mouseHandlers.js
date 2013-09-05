@@ -213,10 +213,10 @@ define([
 				events.removeEventListener(targetElement, MouseEvents.mouseover, mouseover, true);
 				events.removeEventListener(targetElement, MouseEvents.mouseup, mouseup, true);
 			},
-			setPointerCapture: function (pointerId, targetElement) {
+			setPointerCapture: function (targetElement) {
 				return MouseTracker.setCapture(targetElement);
 			},
-			releasePointerCapture: function (pointerId, targetElement) {
+			releasePointerCapture: function (targetElement) {
 				return MouseTracker.releaseCapture(targetElement, false);
 			}
 		};

@@ -455,18 +455,18 @@ define([
 			},
 			/**
 			 * Set Pointer capture
-			 * @param pointerId Id of the Pointer
 			 * @param targetElement DOM element to capture
+			 * @param pointerId Id of the Pointer
 			 */
-			setPointerCapture: function (pointerId, targetElement) {
+			setPointerCapture: function (targetElement, pointerId) {
 				return TouchTracker.setCapture(pointerId - 2, targetElement);
 			},
 			/**
 			 * Release Pointer capture
-			 * @param pointerId Id of the Pointer
 			 * @param targetElement DOM element to release
+			 * @param pointerId Id of the Pointer
 			 */
-			releasePointerCapture: function (pointerId, targetElement) {
+			releasePointerCapture: function (targetElement, pointerId) {
 				return TouchTracker.releaseCapture(pointerId - 2, targetElement, false);
 			}
 		};

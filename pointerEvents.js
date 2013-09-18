@@ -110,7 +110,7 @@ define([
 		 * @param pointerId Pointer ID
 		 */
 		pointerEvents.setPointerCapture = function (targetElement, pointerId) {
-			console.log("setPointerCapture [pointer:" + pointerId + ", target:" + targetElement.id);
+			//console.log("setPointerCapture [pointer:" + pointerId + ", target:" + targetElement.id + "]");
 			if (!this._targetElement) return false;
 			if (events.hasPointerEnabled()) {
 				return targetElement.setPointerCapture(pointerId);
@@ -134,7 +134,7 @@ define([
 		 * @param pointerId Pointer ID
 		 */
 		pointerEvents.releasePointerCapture = function (targetElement, pointerId) {
-			console.log("releasePointerCapture [pointer:" + pointerId + ", target:" + targetElement.id);
+			//console.log("releasePointerCapture [pointer:" + pointerId + ", target:" + targetElement.id + "]");
 			if (!this._targetElement) return false;
 			if (events.hasPointerEnabled()) {
 				return targetElement.releasePointerCapture(pointerId);
@@ -168,7 +168,7 @@ define([
 			}
 		};
 
-		// rule to define CSS (touch-action or -ms-touch-action) when dojoTouchAction attribute is set on Elements
+		// rule to define CSS (touch-action or -ms-touch-action) when data-touch-action attribute is set on Elements
 		function insertTouchActionCSSRule(attributeName, styleName){
 			var styleElement = document.createElement('style');
 			styleElement.textContent = 	'[' + attributeName + '="none"]  { ' + styleName + ': none; }' +

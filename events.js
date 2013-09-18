@@ -38,7 +38,7 @@ define([
 		events.lostpointercapture = "dojoLostPointerCapture";
 
 		// name and values of DOM element attribute "touch action".
-		events.TOUCH_ACTION = "dojoTouchAction";
+		events.TOUCH_ACTION = "data-touch-action";
 		events.TOUCH_ACTION_AUTO = 0;  // 0000
 		events.TOUCH_ACTION_PAN_X = 1; // 0001
 		events.TOUCH_ACTION_PAN_Y = 2; // 0010

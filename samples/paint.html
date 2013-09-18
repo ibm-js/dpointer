@@ -53,9 +53,27 @@
 			var context = canvas.getContext("2d");
 			canvas.height = window.innerHeight;
 			canvas.width = window.innerWidth;
+
+			var captured = {};
+
+			// catch Pointer Down events and set capture on canvas
+			canvas.addEventListener(pointers.events.pointerdown, function (event) {
+				pointers.setPointerCapture(canvas, event.pointerId);
+			});
+
+			// catch pointer capture event
+			canvas.addEventListener(pointer.events.gotpointercapture, function (event) {
+				captured[event.pointerId] = true;
+			});
+
+			// catch pointer capture event
+			canvas.addEventListener(pointer.events.lostpointercapture, function (event) {
+				captured[event.pointerId] = false;
+			});
+
 			// catch Pointer Move events and draw according to Pointer position
-			canvas.addEventListener("dojoPointerMove", function (event) {
-				if (event.buttons > 0){
+			canvas.addEventListener(pointers.events.pointermove, function (event) {
+				if (captured[event.pointerId]){
 					context.fillStyle = pointers.PointerColor.get(event.pointerId);
 					context.fillRect(event.clientX, event.clientY, 5, 5);
 				}

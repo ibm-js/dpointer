@@ -55,11 +55,25 @@ define([
 			props.pressure = msPointerEvent.pressure;
 			props.tiltX = msPointerEvent.tiltX;
 			props.tiltY = msPointerEvent.tiltY;
-			props.pointerType = msPointerEvent.pointerType; // todo: normalize IE10 with string
+			props.pointerType = normalizePointerType(msPointerEvent.pointerType);
 			props.hwTimestamp = msPointerEvent.hwTimestamp;
 			props.isPrimary = msPointerEvent.isPrimary;
 
 			return new events.Pointer(pointerType, props);
+		}
+
+		// http://msdn.microsoft.com/en-us/library/ie/dn304886%28v=vs.85%29.aspx
+		function normalizePointerType(pointerType){
+			switch(pointerType){
+				case 2:
+					return "touch";
+				case 3:
+					return "pen";
+				case 4:
+					return "mouse";
+				default:
+					return pointerType;
+			}
 		}
 
 		/**

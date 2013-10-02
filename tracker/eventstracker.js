@@ -16,8 +16,8 @@ tracker.trackTouchEvents = false;
 		'mouseover',
 		'mousemove',
 		'mouseout',
-//		'mouseenter',
-//		'mouseleave',
+		'mouseenter',
+		'mouseleave',
 		// https://developer.mozilla.org/en-US/docs/Web/Reference/Events/contextmenu
 		'contextmenu',
 		'dblclick',
@@ -43,6 +43,8 @@ tracker.trackTouchEvents = false;
 		'dojoPointerUp',
 		'dojoPointerOut',
 		'dojoPointerOver',
+		'dojoPointerEnter',
+		'dojoPointerLeave',
 		'dojoPointerCancel',
 		'dojoGotPointerCapture',
 		'dojoLostPointerCapture'
@@ -211,6 +213,8 @@ tracker.trackTouchEvents = false;
 			case "dojoPointerUp":
 			case "dojoPointerOut":
 			case "dojoPointerOver":
+			case "dojoPointerEnter":
+			case "dojoPointerLeave":
 			case "dojoPointerCancel":
 			case "dojoGotPointerCapture":
 			case "dojoLostPointerCapture":
@@ -317,19 +321,23 @@ tracker.trackTouchEvents = false;
 			DOM4SUPPORT = true;
 		}catch(error){
 		}
+
+		var eventInfo = document.createEvent("MouseEvents");
+		var divInfo = document.createElement("div");
 		try {
 			log("", "");
-			log("DOM4 MouseEvent",DOM4SUPPORT );
-			log("Event.defaultPrevented", document.createEvent("MouseEvents").defaultPrevented !== undefined);
-			log("Event.isTrusted", document.createEvent("MouseEvents").isTrusted !== undefined);
-			log("Event.buttons", document.createEvent("MouseEvents").buttons !== undefined);
+			log("new MouseEvent(...) support",DOM4SUPPORT );
+			log("HTMLElement.onmouseleave", ('onmouseleave' in document.body));
+			log("MouseEvents.buttons", eventInfo.buttons !== undefined);
+			log("MouseEvents.defaultPrevented", eventInfo.defaultPrevented !== undefined);
+			log("MouseEvents.isTrusted", eventInfo.isTrusted !== undefined);
+			log("MouseEvent.stopImmediatePropagation", Boolean(eventInfo.stopImmediatePropagation));
 			log("Function.bind", Boolean(Function.bind));
-			log("stopImmediatePropagation", Boolean(document.createEvent('MouseEvent').stopImmediatePropagation));
-			log("WebKitMutationObserver", Boolean(window.WebKitMutationObserver));
-			log("MutationObserver", Boolean(window.MutationObserver));
+			log("window.WebKitMutationObserver", Boolean(window.WebKitMutationObserver));
+			log("window.MutationObserver", Boolean(window.MutationObserver));
 			log("hasTouchEvents", ("ontouchstart" in document));
-			log("msPointerEnabled", Boolean(window.navigator.msPointerEnabled));
-			log("pointerEnabled", Boolean(window.navigator.pointerEnabled));
+			log("window.navigator.msPointerEnabled", Boolean(window.navigator.msPointerEnabled));
+			log("window.navigator.pointerEnabled", Boolean(window.navigator.pointerEnabled));
 			log("user agent", navigator.userAgent);
 			log("", "");
 		} catch (err) {

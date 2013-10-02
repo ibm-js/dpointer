@@ -4,6 +4,16 @@
 	Simply change the device orientation to reset the canvas.
 	Number of active touch point depends on hardware capabilities and system option.
 	To use more than 3 touch points on iOS, disable Mutitasking Gestures in Settings > General.
+	IE9 do not reflect pressed button state on mousemove events. This is why  this sample relies on
+	pointer capture rather than pointermove and event.button value.
+
+	 Tested on:
+	 - Android 4.1.1: stockbrowser + Chrome
+	 - iOS 6.1.3
+	 - Windows Phone 8
+	 - FireFox desktop 24
+	 - Internet Explorer 9 and 10
+	 - Chrome Desktop 28
 -->
 <html>
 <head>
@@ -39,16 +49,10 @@
 		}
 	</style>
 	<script type="text/javascript">
-/*
-		require([
-			"dojo/domReady",
-			"pointer/pointerEvents"
-		], function (domReady, pointerEvents) {
-*/
 		require([
 			"pointer/pointerEvents",
 			"pointer/domReady/domReady!"
-		], function (pointers) {
+		], function (pointer) {
 			var canvas = document.getElementById("drawingArea");
 			var context = canvas.getContext("2d");
 			canvas.height = window.innerHeight;
@@ -57,24 +61,27 @@
 			var captured = {};
 
 			// catch Pointer Down events and set capture on canvas
-			canvas.addEventListener(pointers.events.pointerdown, function (event) {
-				pointers.setPointerCapture(canvas, event.pointerId);
+			canvas.addEventListener(pointer.events.pointerdown, function (event) {
+				pointer.setPointerCapture(canvas, event.pointerId);
 			});
 
-			// catch pointer capture event
+			// catch "got" pointer capture event and remember the pointerId as active
 			canvas.addEventListener(pointer.events.gotpointercapture, function (event) {
 				captured[event.pointerId] = true;
 			});
 
-			// catch pointer capture event
+			// catch "lost" pointer capture event and set the pointerId as inactive
 			canvas.addEventListener(pointer.events.lostpointercapture, function (event) {
 				captured[event.pointerId] = false;
 			});
 
 			// catch Pointer Move events and draw according to Pointer position
-			canvas.addEventListener(pointers.events.pointermove, function (event) {
+			canvas.addEventListener(pointer.events.pointermove, function (event) {
 				if (captured[event.pointerId]){
-					context.fillStyle = pointers.PointerColor.get(event.pointerId);
+					// as pointer capture is enabled for this pointerId,
+					// we do not have to check if the button is pressed:
+					// Pointer capture is enabled  until pointer is released.
+					context.fillStyle = pointer.PointerColor.get(event.pointerId);
 					context.fillRect(event.clientX, event.clientY, 5, 5);
 				}
 			});

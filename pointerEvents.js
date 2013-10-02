@@ -1,4 +1,3 @@
-
 define([
 	"pointer/events",
 	"pointer/touchHandlers",
@@ -168,7 +167,7 @@ define([
 			}
 		};
 
-		// rule to define CSS (touch-action or -ms-touch-action) when data-touch-action attribute is set on Elements
+		// CSS rule to define touch-action or -ms-touch-action when data-touch-action attribute is set on Elements
 		function insertTouchActionCSSRule(attributeName, styleName){
 			var styleElement = document.createElement('style');
 			styleElement.textContent = 	'[' + attributeName + '="none"]  { ' + styleName + ': none; }' +

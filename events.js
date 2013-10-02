@@ -287,6 +287,9 @@ define([
 		 * @returns {*}
 		 */
 		events.dispatchEvent = function (targetElement, event) {
+			// possible optimization:
+			// Chrome: use getEventListeners() to dispatch event only if there is a listener for the target event type
+			// other: hook HTMLElement.prototype.addEventListener to keep a record of active [element|event type]
 			if (!targetElement){
 				console.log("ERROR> targetElement null or undefined (event: " + event.type + ")");
 				return false;
@@ -294,6 +297,65 @@ define([
 			if (!(targetElement.dispatchEvent )) throw new Error("dispatchEvent not supported on targetElement");
 			return targetElement.dispatchEvent(event);
 		};
+
+		/**
+		 * Dispatch dojo pointerleave events
+		 * @param target
+		 * @param relatedTarget
+		 * @param syntheticEvent
+		 */
+		events.dispatchLeaveEvents = function (target, relatedTarget, syntheticEvent){
+			if(target != null && target != relatedTarget && !(target.compareDocumentPosition(relatedTarget) & 16 )){
+				this.dispatchEvent(target, syntheticEvent);
+				this.dispatchLeaveEvents(target.parentNode, relatedTarget, syntheticEvent);
+			}
+		};
+
+		/**
+		 * Dispatch dojo pointerenter events
+		 * @param target
+		 * @param relatedTarget
+		 * @param syntheticEvent
+		 */
+		events.dispatchEnterEvents = function (target, relatedTarget, syntheticEvent){
+			if(target != null && target != relatedTarget && !(target.compareDocumentPosition(relatedTarget) & 16)){
+				this.dispatchEnterEvents(target.parentNode, relatedTarget, syntheticEvent);
+				this.dispatchEvent(target, syntheticEvent);
+			}
+		};
+
+//		 p1.compareDocumentPosition(p2)
+//		 1 (No relationship, the two nodes do not belong to the same document)
+//		 2 (The first node (p1) is positioned after the second node (p2))
+//		 4 (The first node (p1) is positioned before the second node (p2))
+//		 8 (The first node (p1) is positioned inside the second node (p2))
+//		 16 (The first node (p1) contains/include the second node (p2))
+//		 32 (No relationship, or the two nodes are two attributes on the same element)
+//		function _dumpPosition(target, relatedTarget){
+//			var position = target.compareDocumentPosition(relatedTarget);
+//			var targetId = target.id;
+//			var relatedTargetId = relatedTarget.id;
+//			console.log("-->");
+//			if(position & 1) console.log("no relationship");
+//			if(position & 2) console.log(targetId  + " after " + relatedTargetId);
+//			if(position & 4) console.log(targetId + " before " + relatedTargetId);
+//			if(position & 8) console.log(targetId + " inside " + relatedTargetId);
+//			if(position & 16) console.log(targetId + " contains " + relatedTargetId);
+//			if(position & 32) console.log("no relationship");
+//		}
+//		function _dumpPhase(event){
+//			switch(event.eventPhase){
+//				case event.CAPTURING_PHASE:
+//					return "CAPTURING_PHASE";
+//				case event.AT_TARGET:
+//					return "AT_TARGET";
+//				case event.BUBBLING_PHASE:
+//					return "BUBBLING_PHASE";
+//				default:
+//					return "??";
+//			}
+//		}
+
 		/**
 		 * Returns true if user agent handles native touch events.
 		 */

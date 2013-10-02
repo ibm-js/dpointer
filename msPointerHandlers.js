@@ -110,6 +110,9 @@ define([
 		function msPointerOut(e) {
 			var syntheticEvent = createPointer(events.pointerout, e);
 			events.dispatchEvent(e.target, syntheticEvent);
+			// generate dojo pointerleave events
+			syntheticEvent = createPointer(events.pointerleave, e, {bubbles: false});
+			events.dispatchLeaveEvents(e.target, e.relatedTarget, syntheticEvent);
 		}
 
 		/**
@@ -119,6 +122,9 @@ define([
 		function msPointerOver(e) {
 			var syntheticEvent = createPointer(events.pointerover, e);
 			events.dispatchEvent(e.target, syntheticEvent);
+			// generate dojo pointerenter events
+			syntheticEvent = createPointer(events.pointerenter, e, {bubbles: false});
+			events.dispatchEnterEvents(e.target, e.relatedTarget, syntheticEvent);
 		}
 
 		/**

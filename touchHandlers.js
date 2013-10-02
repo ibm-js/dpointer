@@ -411,11 +411,19 @@ define([
 						syntheticEvent = createPointer(events.pointerout, e, touch, {relatedTarget: touchTarget});
 						events.dispatchEvent(lastElementFromPoint, syntheticEvent);
 
+						// generate dojo pointerleave events
+						syntheticEvent = createPointer(events.pointerleave, e, touch, {relatedTarget: touchTarget, bubbles: false});
+						events.dispatchLeaveEvents(lastElementFromPoint, touchTarget, syntheticEvent);
+
 						syntheticEvent = createPointer(events.pointermove, e, touch);
 						events.dispatchEvent(touchTarget, syntheticEvent);
 
 						syntheticEvent = createPointer(events.pointerover, e, touch, {relatedTarget: lastElementFromPoint});
 						events.dispatchEvent(touchTarget, syntheticEvent);
+
+						// generate dojo pointerenter events
+						syntheticEvent = createPointer(events.pointerenter, e, touch, {relatedTarget: lastElementFromPoint, bubbles: false});
+						events.dispatchEnterEvents(touchTarget, lastElementFromPoint, syntheticEvent);
 					} else {
 						syntheticEvent = createPointer(events.pointermove, e, touch);
 						events.dispatchEvent(touchTarget, syntheticEvent);

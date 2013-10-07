@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <!--
-	Sample paint application to demonstrate multi touch handling of Dojo Pointers.
+	. This sample relies on
+	pointer capture rather than pointermove and event.button value.
+
+	Sample paint application to demonstrate multi touch handling. This sample illustrate a possible usage of
+	pointer capture. IE9 doesn't reflect pressed button state on mousemove events. Pointer capture allow to get over
+	this limitation.
+
 	Simply change the device orientation to reset the canvas.
 	Number of active touch point depends on hardware capabilities and system option.
 	To use more than 3 touch points on iOS, disable Mutitasking Gestures in Settings > General.
-	IE9 do not reflect pressed button state on mousemove events. This is why  this sample relies on
-	pointer capture rather than pointermove and event.button value.
 
 	 Tested on:
 	 - Android 4.1.1: stockbrowser + Chrome
@@ -21,13 +25,12 @@
 	<meta name="viewport"
 		  content="width=device-width, initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
 	<meta name="apple-mobile-web-app-capable" content="yes">
-	<!--
-	<script type="text/javascript" src="../../dojo/dojo.js" data-dojo-config="async: true"></script>
-	-->
-	<script>var require = {baseUrl:"../.."}</script>
-	<script type="text/javascript" src="../requirejs/require.js"></script>
 
-	<title>Dojo Pointer: paint sample</title>
+	<script>var require = {baseUrl:"../../.."}</script>
+	<script type="text/javascript" src="../../../requirejs/require.js"></script>
+
+	<title>Pointer Events: tests > paint2</title>
+
 	<style>
 		html,body {
 			height: 100%;
@@ -48,10 +51,11 @@
 			position: absolute;
 		}
 	</style>
+
 	<script type="text/javascript">
-		require([
-			"pointer/pointerEvents",
-			"pointer/domReady/domReady!"
+		requirejs([
+			"pointer/events",
+			"domReady/domReady!"
 		], function (pointer) {
 			var canvas = document.getElementById("drawingArea");
 			var context = canvas.getContext("2d");
@@ -61,27 +65,27 @@
 			var captured = {};
 
 			// catch Pointer Down events and set capture on canvas
-			canvas.addEventListener(pointer.events.pointerdown, function (event) {
+			canvas.addEventListener("pointerdown", function (event) {
 				pointer.setPointerCapture(canvas, event.pointerId);
 			});
 
 			// catch "got" pointer capture event and remember the pointerId as active
-			canvas.addEventListener(pointer.events.gotpointercapture, function (event) {
+			canvas.addEventListener("gotpointercapture", function (event) {
 				captured[event.pointerId] = true;
 			});
 
 			// catch "lost" pointer capture event and set the pointerId as inactive
-			canvas.addEventListener(pointer.events.lostpointercapture, function (event) {
+			canvas.addEventListener("lostpointercapture", function (event) {
 				captured[event.pointerId] = false;
 			});
 
 			// catch Pointer Move events and draw according to Pointer position
-			canvas.addEventListener(pointer.events.pointermove, function (event) {
+			canvas.addEventListener("pointermove", function (event) {
 				if (captured[event.pointerId]){
 					// as pointer capture is enabled for this pointerId,
 					// we do not have to check if the button is pressed:
 					// Pointer capture is enabled  until pointer is released.
-					context.fillStyle = pointer.PointerColor.get(event.pointerId);
+					context.fillStyle = PointerColor.get(event.pointerId);
 					context.fillRect(event.clientX, event.clientY, 5, 5);
 				}
 			});
@@ -90,10 +94,22 @@
 				canvas.height = window.innerHeight;
 				canvas.width = window.innerWidth;
 			});
+
+			var PointerColor = {
+				index: -1,
+				colors: ["#FFFF00", "#0000FF", "#FF0000", "#00FF00", "#FFFFFF"], // yellow, blue, red, green, white
+				get: function (pointerId) {
+					return ( (this[pointerId]) || ((this[pointerId]) = this.next()));
+				},
+				next: function () {
+					this.index = ((this.colors.length - this.index) == 1) ? 0 : (this.index + 1);
+					return (this.colors[this.index]);
+				}
+			};
 		});
 	</script>
 </head>
 <body>
-<canvas id="drawingArea" data-touch-action="none">Canvas not supported?</canvas>
+	<canvas id="drawingArea" data-touch-action="none">Canvas not supported?</canvas>
 </body>
 </html>

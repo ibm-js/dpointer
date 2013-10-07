@@ -1,7 +1,0 @@
-[submodule "requirejs"]
-	path = requirejs
-	url = https://github.com/jrburke/requirejs.git
-
-[submodule "domReady"]
-	path = domReady
-	url = https://github.com/requirejs/domReady.git

@@ -20,7 +20,7 @@ html, body {
     border-width: 0;
     background-color: white;
     font-family: courier, monospace;
-    font-size: 0.85rem;
+    font-size: 0.95em;
     overflow: hidden;
 }
 
@@ -37,7 +37,6 @@ html, body {
     color: wheat;
     font-weight: bold;
     padding: 2px;
-    font-size: 1em;
     -ms-touch-action: none;
 }
 
@@ -53,7 +52,7 @@ html, body {
     vertical-align: middle;
     background-color:#166B81;
     -webkit-user-select: none;
-    -moz-user-select: moz-none;
+    -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
 }
@@ -116,7 +115,7 @@ input[type="checkbox"], label  {
     top: 0;
     width: 50%;
     height: 100%;
- }
+}
 
 #middleBlock {
     position: absolute;
@@ -126,5 +125,3 @@ input[type="checkbox"], label  {
     height: 50%;
     width: 50%;
 }
-
-/*EOF*/

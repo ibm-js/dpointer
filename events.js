@@ -1,380 +1,166 @@
-/**
- * dojo pointer events.
- */
 define([
-],
-	function () {
-		"use strict";
+	"./handlers/utils",
+	"./handlers/touch",
+	"./handlers/mouse",
+	"./handlers/mspointer"
+], function (utils, touch, mouse, mspointer) {
+	"use strict";
 
-		/**
-		 * @exports pointer/events
-		 **/
-		var events = {
-			/**
-			 * Indicates whether the running environment supports DOM4 events
-			 * @type boolean
-			 */
-			DOM4_EVENT_SUPPORT: false
-		};
-		try {
-			// Check if MouseEvent constructor is supported.
-			var event = new MouseEvent('mousedown', {});
-			events.DOM4_EVENT_SUPPORT = true;
-		} catch(e) {
-		}
+	var pointerEvents = {
+		_targetElement: null
+	};
 
-		// type names of pointer events generated
-		/** @field Pointer Down event type name */
-		events.pointerdown = "dojoPointerDown";
-		/** Pointer UP event type name */
-		events.pointerup = "dojoPointerUp";
-		events.pointercancel = "dojoPointerCancel";
-		events.pointermove = "dojoPointerMove";
-		events.pointerover = "dojoPointerOver";
-		events.pointerout = "dojoPointerOut";
-		events.pointerenter = "dojoPointerEnter"; // not implemented
-		events.pointerleave = "dojoPointerLeave"; // not implemented
-		events.gotpointercapture = "dojoGotPointerCapture";
-		events.lostpointercapture = "dojoLostPointerCapture";
+	var ua = navigator.userAgent;
+	var isChrome = /chrome/i.test(ua);
+	var isMobile = /(mobile)|(android)/i.test(ua);
 
-		// name and values of DOM element attribute "touch action".
-		events.TOUCH_ACTION = "data-touch-action";
-		events.TOUCH_ACTION_AUTO = 0;  // 0000
-		events.TOUCH_ACTION_PAN_X = 1; // 0001
-		events.TOUCH_ACTION_PAN_Y = 2; // 0010
-		events.TOUCH_ACTION_NONE = 3;  // 0011
-
-		/**
-		 * handler for Click event.
-		 * @param e
-		 * @returns {boolean}
-		 */
-		function clickHandler(e) {
-			if (events.hasTouchEvents()) {
-				// (7) Android 4.1.1 generates a click after touchend even when touchstart is prevented.
-				// if we receive a native click at an element with touch action disabled we just have to absorb it.
-				// (fixed in Android 4.1.2+)
-				if (events.isNativeClickEvent(e) && (events.getTouchAction(e.target) != events.TOUCH_ACTION_AUTO)) {
-					e.preventDefault();
-					e.stopImmediatePropagation();
-					return false;
-				}
+	/**
+	 * Enable Pointer events. Register native event handlers. Importing this module automatically register native
+	 * event handlers on window.document.
+	 *
+	 * @param targetElement DOM element on which to attach handlers.
+	 * @default window.document
+	 */
+	pointerEvents.enable = function (targetElement) {
+		targetElement = targetElement || window.document;
+		if (this._targetElement) return; // already initialized
+		if (utils.hasPointerEnabled()) {
+			//todo: test and validate with IE11 RTM
+			console.log("window.navigator.pointerEnabled not yet supported...");
+			if (utils.hasMSPointerEnabled()) {
+				console.log("...fallback to prefixed MSPointer events.");
+				mspointer.registerHandlers(targetElement);
+			} else{
+				console.log("...fallback to mouse events..");
+				mouse.registerHandlers(targetElement);
 			}
-			return true;
-		}
-		/**
-		 * returns the "touch action" which applies to the element, based on "touch action"
-		 * from its ancestors.
-		 *
-		 * @param targetNode
-		 * @return Number (auto: 0, pan-x:1, pan-y:2, none: 3)
-		 */
-		events.getTouchAction = function (targetNode) {
-			// touch-action default value: allow default behavior (no prevent default on touch).
-			var nodeValue = events.TOUCH_ACTION_AUTO;
-			// find ancestors with "touch action" and define behavior accordingly.
-			do {
-				switch (targetNode.getAttribute && targetNode.getAttribute(events.TOUCH_ACTION)) {
-					case "auto":
-						nodeValue = nodeValue | events.TOUCH_ACTION_AUTO;
-						break;
-					case "pan-x":
-						nodeValue = nodeValue | events.TOUCH_ACTION_PAN_X;
-						break;
-					case "pan-y":
-						nodeValue = nodeValue | events.TOUCH_ACTION_PAN_Y;
-						break;
-					case "none":
-						nodeValue = nodeValue | events.TOUCH_ACTION_NONE;
-						break;
-				}
-				//console.log("[" + ((targetNode.id) || (targetNode.tagName) || "window") + "] = "
-				// + ((targetNode[events.TOUCH_ACTION]) || "auto" )+ " > " + nodeValue);
-			} while ((nodeValue != events.TOUCH_ACTION_NONE) && (targetNode = targetNode.parentNode));
-			return nodeValue;
-		};
-		/**
-		 * Pointer Event constructor.
-		 *
-		 * @param pointerType pointer type
-		 * @param props properties
-		 * @returns {Event} a Dojo Pointer event
-		 * @constructor description
-		 */
-		events.Pointer = function (pointerType, props) {
-			props = props || {};
-			props.bubbles = (props.bubbles) || ((pointerType != events.pointerenter) && (pointerType != events.pointerleave));
-			props.cancelable = (props.cancelable) || true;
-			// Mouse Event spec
-			// http://www.w3.org/TR/2001/WD-DOM-Level-3-Events-20010823/events.html#Events-eventgroupings-mouseevents
-			// DOM4 Event: https://dvcs.w3.org/hg/d4e/raw-file/tip/source_respec.htm
-			var e;
-			if (!events.DOM4_EVENT_SUPPORT) {
-				e = document.createEvent('MouseEvents');
-				e.initMouseEvent(pointerType,
-					(props.bubbles),
-					(props.cancelable),
-					(props.view) || null,
-					(props.detail) || null,
-					(props.screenX) || 0,
-					(props.screenY) || 0,
-					(props.clientX) || 0,
-					(props.clientY) || 0,
-					(props.ctrlKey) || false,
-					(props.altKey) || false,
-					(props.shiftKey) || false,
-					(props.metaKey) || false,
-					(props.button) || 0,
-					(props.relatedTarget) || null
-				);
+		} else {
+			if (utils.hasMSPointerEnabled()) {
+				mspointer.registerHandlers(targetElement);
 			} else {
-				e = new MouseEvent(pointerType, props);
-			}
-			if (! "buttons" in e) {
-				Object.defineProperty(e, "buttons", {
-					value: (props.buttons || 0),
-					enumerable: true, writable: false});
-			} else {
-				Object.defineProperty(e, 'buttons', {
-					get: function(){ return props.buttons },
-					enumerable: true});
-			}
-			// Pointer events spec
-			// http://www.w3.org/TR/pointerevents/#pointerevent-interface
-			Object.defineProperties(e,
-				{
-					pointerId: {
-						value: props.pointerId || 0,
-						enumerable: true
-					},
-					width: {
-						value: props.width || 0,
-						enumerable: true
-					},
-					height: {
-						value: props.height || 0,
-						enumerable: true
-					},
-					pressure: {
-						value: props.pressure || 0,
-						enumerable: true
-					},
-					tiltX: {
-						value: props.tiltX || 0,
-						enumerable: true
-					},
-					tiltY: {
-						value: props.tiltY || 0,
-						enumerable: true
-					},
-					pointerType: {
-						value: props.pointerType || '',
-						enumerable: true
-					},
-					hwTimestamp: {
-						value: props.hwTimestamp || 0,
-						enumerable: true
-					},
-					isPrimary: {
-						value: props.isPrimary || false,
-						enumerable: true
+				if (utils.hasTouchEvents()) {
+					if (!isMobile) {
+						mouse.registerHandlers(targetElement);
+						if (isChrome) {
+							touch.registerHandlers(targetElement);
+						}
+					} else {
+						touch.registerHandlers(targetElement);
 					}
+				} else {
+					mouse.registerHandlers(targetElement);
 				}
-			);
-			return e;
-		};
-		/**
-		 * creates a synthetic click event with properties based on another event.
-		 * @param sourceEvent
-		 * @param dblClick
-		 * @returns {Event}
-		 */
-		events.createSyntheticClick = function (sourceEvent, dblClick) {
-			var e = document.createEvent('MouseEvents');
-			if (e.isTrusted === undefined) { // Android 4.1.1 does not implement isTrusted
-				Object.defineProperty(e, "isTrusted", {
-						value: false,
-						enumerable: true,
-						writable: false,
-						configurable: false
-					}
-				);
 			}
-			e.initMouseEvent((dblClick)?"dblclick":"click",
-				true, // bubbles
-				true, // cancelable
-				sourceEvent.view,
-				sourceEvent.detail,
-				sourceEvent.screenX,
-				sourceEvent.screenY,
-				sourceEvent.clientX,
-				sourceEvent.clientY,
-				sourceEvent.ctrlKey,
-				sourceEvent.altKey,
-				sourceEvent.shiftKey,
-				sourceEvent.metaKey,
-				0, // touch: always 0
-				null
-			);
-			return e;
-		};
-		/**
-		 * returns true for a native click event, false for a synthetic click event.
-		 * @param e
-		 * @returns {boolean|*}
-		 */
-		events.isNativeClickEvent = function (e) {
-			return (e.isTrusted === undefined || e.isTrusted);
-		};
-		/**
-		 * register click handler.
-		 */
-		events.registerClickHandler = function () {
-			events.addEventListener(window.document, "click", clickHandler, true);
-		};
-		/**
-		 * deregister click handler
-		 */
-		events.deregisterClickHandler = function () {
-			events.removeEventListener(window.document, "click", clickHandler, true);
-		};
-		/**
-		 * returns the value of MouseEvent.buttons from MouseEvent.which.
-		 * @param whichValue
-		 * @returns {*}
-		 */
-		events.which2buttons = function (whichValue) {
-			switch (whichValue) {
-				case 0:
-					return 0;
-				case 1:
-					return 1;
-				case 2:
-					return 4;
-				case 3:
-					return 2;
-				default:
-					return Math.pow(2, (whichValue - 1));
+		}
+		utils.registerClickHandler();
+		this._targetElement = targetElement;
+	};
+
+	/**
+	 * Disable Pointer events. Unregister native event handlers.
+	 */
+	pointerEvents.disable = function () {
+		if (this._targetElement) {
+			touch.deregisterHandlers(this._targetElement);
+			mouse.deregisterHandlers(this._targetElement);
+			mspointer.deregisterHandlers(this._targetElement);
+			utils.deregisterClickHandler();
+		}
+		this._targetElement = null;
+	};
+
+	/**
+	 * Set the attribute data-touch-action on the target element.
+	 * Supported touch-actions are "auto" (user agent handles touch actions
+	 * default behaviors), "none" (disable user agent default behavior), pan-x and pan-y.
+	 *
+	 * @param targetElement a DOM element
+	 * @param actionType touch action type: auto, none, pan-x or pan-y
+	 */
+	pointerEvents.setTouchAction = function (targetElement, actionType) {
+		targetElement.setAttribute(utils.TouchAction.ATTR_NAME, actionType);
+	};
+
+	/**
+	 * Set pointer capture on a DOM element.
+	 *
+	 * @param targetElement DOM element
+	 * @param pointerId Pointer ID
+	 */
+	pointerEvents.setPointerCapture = function (targetElement, pointerId) {
+		// todo: Internet Explorer automatically set pointer capture on form controls when touch-action is none
+		// todo: manage a list of element type to apply pointer capture automatically when touch-action=none is set??
+		if (!this._targetElement) return false; // not initialized
+		if (utils.hasPointerEnabled()) {
+			// use native Pointer Events method
+			return targetElement.setPointerCapture(pointerId);
+		} else {
+			if (utils.hasMSPointerEnabled()) {
+				// use native Pointer Events method
+				return targetElement.msSetPointerCapture(pointerId);
+			} else {
+				if (pointerId == 1) { // mouse always gets ID = 1
+					return mouse.setPointerCapture(targetElement);
+				} else {
+					return touch.setPointerCapture(targetElement, pointerId);
+				}
 			}
-		};
-		/**
-		 * Registers the event handler eventListener on target element targetElement
-		 * for events of type eventName.
-		 *
-		 * @param targetElement
-		 * @param eventName
-		 * @param eventListener
-		 * @param useCapture
-		 */
-		events.addEventListener = function (targetElement, eventName, eventListener, useCapture) {
-			targetElement.addEventListener(eventName, eventListener, useCapture);
-		};
-		/**
-		 * Unregister an existing handler.
-		 * @param targetElement
-		 * @param eventName
-		 * @param eventListener
-		 * @param useCapture
-		 */
-		events.removeEventListener = function (targetElement, eventName, eventListener, useCapture) {
-			targetElement.removeEventListener(eventName, eventListener, useCapture);
-		};
-		/**
-		 * Dispatch event.
-		 *
-		 * @param targetElement
-		 * @param event
-		 * @returns {*}
-		 */
-		events.dispatchEvent = function (targetElement, event) {
-			// possible optimization:
-			// Chrome: use getEventListeners() to dispatch event only if there is a listener for the target event type
-			// other: hook HTMLElement.prototype.addEventListener to keep a record of active [element|event type]
-			if (!targetElement){
-				console.log("ERROR> targetElement null or undefined (event: " + event.type + ")");
-				return false;
+		}
+	};
+
+	/**
+	 * Unset pointer capture on a DOM element.
+	 *
+	 * @param targetElement DOM element
+	 * @param pointerId Pointer ID
+	 */
+	pointerEvents.releasePointerCapture = function (targetElement, pointerId) {
+		if (!this._targetElement) return false;
+		if (utils.hasPointerEnabled()) {
+			return targetElement.releasePointerCapture(pointerId);
+		} else {
+			if (utils.hasMSPointerEnabled()) {
+				return targetElement.msReleasePointerCapture(pointerId);
+			} else {
+				if (pointerId == 1) {
+					return mouse.releasePointerCapture(targetElement);
+				} else {
+					return touch.releasePointerCapture(targetElement, pointerId);
+				}
 			}
-			if (!(targetElement.dispatchEvent )) throw new Error("dispatchEvent not supported on targetElement");
-			return targetElement.dispatchEvent(event);
-		};
+		}
+	};
 
-		/**
-		 * Dispatch dojo pointerleave events
-		 * @param target
-		 * @param relatedTarget
-		 * @param syntheticEvent
-		 */
-		events.dispatchLeaveEvents = function (target, relatedTarget, syntheticEvent){
-			if(target != null && target != relatedTarget && !(target.compareDocumentPosition(relatedTarget) & 16 )){
-				this.dispatchEvent(target, syntheticEvent);
-				this.dispatchLeaveEvents(target.parentNode, relatedTarget, syntheticEvent);
-			}
-		};
+	/**
+	 * CSS rule to define touch-action or -ms-touch-action when data-touch-action attribute is set on Elements.
+	 *
+	 * @param attributeName
+	 * @param styleName
+	 */
+	function insertTouchActionCSSRule(attributeName, styleName) {
+		var styleElement = document.createElement('style');
+		styleElement.textContent = '[' + attributeName + '="none"]  { ' + styleName + ': none; }' +
+			'[' + attributeName + '="auto"]  { ' + styleName + ': auto; }' +
+			'[' + attributeName + '="pan-x"] { ' + styleName + ': pan-x; }' +
+			'[' + attributeName + '="pan-y"] { ' + styleName + ': pan-y; }' +
+			'[' + attributeName + '="pan-x pan-y"],[' + styleName + '="pan-y pan-x"] ' +
+			'{ ' + styleName + ': pan-x pan-y; }';
+		var head = document.head;
+		head.insertBefore(styleElement, head.firstChild);
+	}
 
-		/**
-		 * Dispatch dojo pointerenter events
-		 * @param target
-		 * @param relatedTarget
-		 * @param syntheticEvent
-		 */
-		events.dispatchEnterEvents = function (target, relatedTarget, syntheticEvent){
-			if(target != null && target != relatedTarget && !(target.compareDocumentPosition(relatedTarget) & 16)){
-				this.dispatchEnterEvents(target.parentNode, relatedTarget, syntheticEvent);
-				this.dispatchEvent(target, syntheticEvent);
-			}
-		};
+	// CSS rule when user agent implements W3C Pointer Events or when a polyfill is in place.
+	if (utils.hasPointerEnabled()) {
+		insertTouchActionCSSRule(utils.TouchAction.ATTR_NAME, "touch-action");
+	}
 
-//		 p1.compareDocumentPosition(p2)
-//		 1 (No relationship, the two nodes do not belong to the same document)
-//		 2 (The first node (p1) is positioned after the second node (p2))
-//		 4 (The first node (p1) is positioned before the second node (p2))
-//		 8 (The first node (p1) is positioned inside the second node (p2))
-//		 16 (The first node (p1) contains/include the second node (p2))
-//		 32 (No relationship, or the two nodes are two attributes on the same element)
-//		function _dumpPosition(target, relatedTarget){
-//			var position = target.compareDocumentPosition(relatedTarget);
-//			var targetId = target.id;
-//			var relatedTargetId = relatedTarget.id;
-//			console.log("-->");
-//			if(position & 1) console.log("no relationship");
-//			if(position & 2) console.log(targetId  + " after " + relatedTargetId);
-//			if(position & 4) console.log(targetId + " before " + relatedTargetId);
-//			if(position & 8) console.log(targetId + " inside " + relatedTargetId);
-//			if(position & 16) console.log(targetId + " contains " + relatedTargetId);
-//			if(position & 32) console.log("no relationship");
-//		}
-//		function _dumpPhase(event){
-//			switch(event.eventPhase){
-//				case event.CAPTURING_PHASE:
-//					return "CAPTURING_PHASE";
-//				case event.AT_TARGET:
-//					return "AT_TARGET";
-//				case event.BUBBLING_PHASE:
-//					return "BUBBLING_PHASE";
-//				default:
-//					return "??";
-//			}
-//		}
+	// CSS rule for IE10 and IE11 preview
+	if (utils.hasMSPointerEnabled()) {
+		insertTouchActionCSSRule(utils.TouchAction.ATTR_NAME, "-ms-touch-action");
+	}
 
-		/**
-		 * Returns true if user agent handles native touch events.
-		 */
-		events.hasTouchEvents =  function () {
-			return ("ontouchstart" in document);
-		};
-		/**
-		 * Returns true if user agent handles  Pointer Events as per W3C specification.
-		 */
-		events.hasPointerEnabled = function () {
-			return !!window.navigator.pointerEnabled;
-		};
-		/**
-		 * Returns true if user agent handles MSPointer Events.
-		 */
-		events.hasMSPointerEnabled = function () {
-			return !!window.navigator.msPointerEnabled;
-		};
+	// start listening to native events
+	pointerEvents.enable();
 
-		return events;
-	});
-//EOF
+	return pointerEvents;
+});

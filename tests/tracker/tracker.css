@@ -50,8 +50,10 @@ html, body {
     height: 20px;
     display: inline-block;
     vertical-align: middle;
-    background-color:#166B81;
+    background-color: #166B81;
+    -webkit-touch-callout: none;
     -webkit-user-select: none;
+    -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -65,18 +67,17 @@ html, body {
 #eventtable {
     border-spacing: 0;
     border-width: 0;
-    text-align:left;
+    text-align: left;
 }
 
 #eventtable td {
     border-color: #808080;
-    border-bottom-width:1px;
-    border-bottom-style: dashed ;
+    border-bottom-width: 1px;
+    border-bottom-style: dashed;
     padding-left: 15px;
 }
 
-
-input[type="checkbox"], label  {
+input[type="checkbox"], label {
     vertical-align: middle;
     height: 20px;
     width: 20px;

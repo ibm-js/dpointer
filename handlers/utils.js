@@ -3,7 +3,7 @@
  */
 define([
 
-], function () {
+], function(){
 	"use strict";
 
 	var utils = {
@@ -48,7 +48,7 @@ define([
 	 * @param targetNode
 	 * @return Number (auto: 0, pan-x:1, pan-y:2, none: 3)
 	 */
-	utils.getTouchAction = function (targetNode) {
+	utils.getTouchAction = function(targetNode){
 		// touch-action default value: allow default behavior (no prevent default on touch).
 		var nodeValue = utils.TouchAction.AUTO;
 		// find ancestors with "touch action" and define behavior accordingly.
@@ -77,12 +77,13 @@ define([
 	 * @param e
 	 * @returns {boolean}
 	 */
-	function clickHandler(e) {
-		if (utils.hasTouchEvents()) {
+	function clickHandler(e){
+		//todo: normalize button/buttons/which values for click/dblclick events
+		if(utils.hasTouchEvents()){
 			// (7) Android 4.1.1 generates a click after touchend even when touchstart is prevented.
 			// if we receive a native click at an element with touch action disabled we just have to absorb it.
 			// (fixed in Android 4.1.2+)
-			if (utils.isNativeClickEvent(e) && (utils.getTouchAction(e.target) != utils.TouchAction.AUTO)) {
+			if(utils.isNativeClickEvent(e) && (utils.getTouchAction(e.target) != utils.TouchAction.AUTO)){
 				e.preventDefault();
 				e.stopImmediatePropagation();
 				return false;
@@ -99,7 +100,7 @@ define([
 	 * @returns {Event} a  Pointer event
 	 * @constructor description
 	 */
-	utils.Pointer = function (pointerType, props) {
+	utils.Pointer = function(pointerType, props){
 		props = props || {};
 		props.bubbles = ('bubbles' in props) ? props.bubbles : true;
 		props.cancelable = (props.cancelable) || true;
@@ -107,9 +108,9 @@ define([
 		// http://www.w3.org/TR/2001/WD-DOM-Level-3-Events-20010823/events.html#Events-eventgroupings-mouseevents
 		// DOM4 Event: https://dvcs.w3.org/hg/d4e/raw-file/tip/source_respec.htm
 		var e;
-		if (utils.SUPPORT_MOUSE_EVENT_CONSTRUCTOR) {
+		if(utils.SUPPORT_MOUSE_EVENT_CONSTRUCTOR){
 			e = new MouseEvent(pointerType, props);
-		} else {
+		}else{
 			e = document.createEvent('MouseEvents');
 			e.initMouseEvent(pointerType,
 				(props.bubbles),
@@ -128,13 +129,13 @@ define([
 				(props.relatedTarget) || null
 			);
 		}
-		if (!"buttons" in e) {
+		if(!"buttons" in e){
 			Object.defineProperty(e, "buttons", {
 				value: (props.buttons || 0),
 				enumerable: true, writable: false});
-		} else {
+		}else{
 			Object.defineProperty(e, 'buttons', {
-				get: function () {
+				get: function(){
 					return props.buttons
 				},
 				enumerable: true});
@@ -163,9 +164,9 @@ define([
 	 * @param dblClick set to true to generate a dblclick event
 	 * @returns {Event}
 	 */
-	utils.createSyntheticClick = function (sourceEvent, dblClick) {
+	utils.createSyntheticClick = function(sourceEvent, dblClick){
 		var e = document.createEvent('MouseEvents');
-		if (e.isTrusted === undefined) { // Android 4.1.1 does not implement isTrusted
+		if(e.isTrusted === undefined){ // Android 4.1.1 does not implement isTrusted
 			Object.defineProperty(e, "isTrusted", {
 					value: false,
 					enumerable: true,
@@ -199,21 +200,21 @@ define([
 	 * @param e
 	 * @returns {boolean|*}
 	 */
-	utils.isNativeClickEvent = function (e) {
+	utils.isNativeClickEvent = function(e){
 		return (e.isTrusted === undefined || e.isTrusted);
 	};
 
 	/**
 	 * register click handler.
 	 */
-	utils.registerClickHandler = function () {
+	utils.registerClickHandler = function(){
 		utils.addEventListener(window.document, "click", clickHandler, true);
 	};
 
 	/**
 	 * deregister click handler
 	 */
-	utils.deregisterClickHandler = function () {
+	utils.deregisterClickHandler = function(){
 		utils.removeEventListener(window.document, "click", clickHandler, true);
 	};
 
@@ -223,7 +224,7 @@ define([
 	 * @param whichValue
 	 * @returns {*}
 	 */
-	utils.which2buttons = function (whichValue) {
+	utils.which2buttons = function(whichValue){
 		switch (whichValue) {
 			case 0:
 				return 0;
@@ -247,7 +248,7 @@ define([
 	 * @param eventListener
 	 * @param useCapture
 	 */
-	utils.addEventListener = function (targetElement, eventName, eventListener, useCapture) {
+	utils.addEventListener = function(targetElement, eventName, eventListener, useCapture){
 		targetElement.addEventListener(eventName, eventListener, useCapture);
 	};
 
@@ -259,7 +260,7 @@ define([
 	 * @param eventListener
 	 * @param useCapture
 	 */
-	utils.removeEventListener = function (targetElement, eventName, eventListener, useCapture) {
+	utils.removeEventListener = function(targetElement, eventName, eventListener, useCapture){
 		targetElement.removeEventListener(eventName, eventListener, useCapture);
 	};
 
@@ -273,12 +274,12 @@ define([
 		// possible optimization:
 		// Chrome: use getEventListeners() to dispatch event ONLY if there is a listener for the target event type
 		// other: hook HTMLElement.prototype.addEventListener to keep a record of active [element|event type]
-	utils.dispatchEvent = function (targetElement, event) {
-		if (!targetElement) {
+	utils.dispatchEvent = function(targetElement, event){
+		if(!targetElement){
 			// handle case when  moving a pointer outside the window (elementFromTouch return null)
 			return false;
 		}
-		if (!(targetElement.dispatchEvent )) throw new Error("dispatchEvent not supported on targetElement");
+		if(!(targetElement.dispatchEvent )) throw new Error("dispatchEvent not supported on targetElement");
 		return targetElement.dispatchEvent(event);
 	};
 
@@ -289,8 +290,8 @@ define([
 	 * @param relatedTarget
 	 * @param syntheticEvent
 	 */
-	utils.dispatchLeaveEvents = function (target, relatedTarget, syntheticEvent) {
-		if (target != null && target != relatedTarget && !(target.compareDocumentPosition(relatedTarget) & 16 )) {
+	utils.dispatchLeaveEvents = function(target, relatedTarget, syntheticEvent){
+		if(target != null && relatedTarget != null && target != relatedTarget && !(target.compareDocumentPosition(relatedTarget) & 16 )){
 			return this.dispatchEvent(target, syntheticEvent) && this.dispatchLeaveEvents(target.parentNode, relatedTarget, syntheticEvent)
 		}
 		return true;
@@ -303,8 +304,8 @@ define([
 	 * @param relatedTarget
 	 * @param syntheticEvent
 	 */
-	utils.dispatchEnterEvents = function (target, relatedTarget, syntheticEvent) {
-		if (target != null && target != relatedTarget && !(target.compareDocumentPosition(relatedTarget) & 16)) {
+	utils.dispatchEnterEvents = function(target, relatedTarget, syntheticEvent){
+		if(target != null && relatedTarget != null && target != relatedTarget && !(target.compareDocumentPosition(relatedTarget) & 16)){
 			return this.dispatchEnterEvents(target.parentNode, relatedTarget, syntheticEvent) && this.dispatchEvent(target, syntheticEvent);
 		}
 		return true;
@@ -313,21 +314,21 @@ define([
 	/**
 	 * Returns true if user agent handles native touch events.
 	 */
-	utils.hasTouchEvents = function () {
+	utils.hasTouchEvents = function(){
 		return ("ontouchstart" in document);
 	};
 
 	/**
 	 * Returns true if user agent handles  Pointer Events as per W3C specification.
 	 */
-	utils.hasPointerEnabled = function () {
+	utils.hasPointerEnabled = function(){
 		return !!window.navigator.pointerEnabled;
 	};
 
 	/**
 	 * Returns true if user agent handles MSPointer Events.
 	 */
-	utils.hasMSPointerEnabled = function () {
+	utils.hasMSPointerEnabled = function(){
 		return !!window.navigator.msPointerEnabled;
 	};
 

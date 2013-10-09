@@ -1,6 +1,6 @@
 define([
 	"./utils"
-], function (utils) {
+], function(utils){
 	"use strict";
 	/**
 	 * this module listen to prefixed "ms" pointer events generates corresponding pointer events.
@@ -25,7 +25,7 @@ define([
 	 * @param msPointerEvent
 	 * @param props
 	 */
-	function createPointer(pointerType, msPointerEvent, props) {
+	function createPointer(pointerType, msPointerEvent, props){
 		props = props || {};
 		// Mouse events properties
 		props.bubbles = msPointerEvent.bubbles;
@@ -56,7 +56,7 @@ define([
 		props.isPrimary = msPointerEvent.isPrimary;
 
 		// fix wrong button value on IE10 and IE11 preview
-		if ( (props.button == -1) &&  (props.pointerType == "touch")){
+		if((props.button == -1) && (props.pointerType == "touch")){
 			props.buttons = 1;
 		}
 
@@ -70,7 +70,7 @@ define([
 	 * @param pointerType
 	 * @returns {*}
 	 */
-	function normalizePointerType(pointerType) {
+	function normalizePointerType(pointerType){
 		switch (pointerType) {
 			case 2:
 				return "touch";
@@ -88,9 +88,8 @@ define([
 	 *
 	 * @param e
 	 */
-	function msPointerDown(e) {
-		var syntheticEvent = createPointer(utils.events.DOWN, e);
-		utils.dispatchEvent(e.target, syntheticEvent);
+	function msPointerDown(e){
+		utils.dispatchEvent(e.target, createPointer(utils.events.DOWN, e));
 	}
 
 	/**
@@ -98,9 +97,8 @@ define([
 	 *
 	 * @param e
 	 */
-	function msPointerMove(e) {
-		var syntheticEvent = createPointer(utils.events.MOVE, e);
-		utils.dispatchEvent(e.target, syntheticEvent);
+	function msPointerMove(e){
+		utils.dispatchEvent(e.target, createPointer(utils.events.MOVE, e));
 	}
 
 	/**
@@ -108,9 +106,8 @@ define([
 	 *
 	 * @param e
 	 */
-	function msPointerUp(e) {
-		var syntheticEvent = createPointer(utils.events.UP, e);
-		utils.dispatchEvent(e.target, syntheticEvent);
+	function msPointerUp(e){
+		utils.dispatchEvent(e.target, createPointer(utils.events.UP, e));
 	}
 
 	/**
@@ -118,12 +115,10 @@ define([
 	 *
 	 * @param e
 	 */
-	function msPointerOut(e) {
-		var syntheticEvent = createPointer(utils.events.OUT, e);
-		utils.dispatchEvent(e.target, syntheticEvent);
+	function msPointerOut(e){
+		utils.dispatchEvent(e.target, createPointer(utils.events.OUT, e));
 		// generate  pointerleave events
-		syntheticEvent = createPointer(utils.events.LEAVE, e, {bubbles: false});
-		utils.dispatchLeaveEvents(e.target, e.relatedTarget, syntheticEvent);
+		utils.dispatchLeaveEvents(e.target, e.relatedTarget, createPointer(utils.events.LEAVE, e, {bubbles: false}));
 	}
 
 	/**
@@ -131,21 +126,18 @@ define([
 	 *
 	 * @param e
 	 */
-	function msPointerOver(e) {
-		var syntheticEvent = createPointer(utils.events.OVER, e);
-		utils.dispatchEvent(e.target, syntheticEvent);
+	function msPointerOver(e){
+		utils.dispatchEvent(e.target, createPointer(utils.events.OVER, e));
 		// generate  pointerenter events
-		syntheticEvent = createPointer(utils.events.ENTER, e, {bubbles: false});
-		utils.dispatchEnterEvents(e.target, e.relatedTarget, syntheticEvent);
+		utils.dispatchEnterEvents(e.target, e.relatedTarget, createPointer(utils.events.ENTER, e, {bubbles: false}));
 	}
 
 	/**
 	 * MSPointerCancel event handler.
 	 * @param e
 	 */
-	function msPointerCancel(e) {
-		var syntheticEvent = createPointer(utils.events.CANCEL, e);
-		utils.dispatchEvent(e.target, syntheticEvent);
+	function msPointerCancel(e){
+		utils.dispatchEvent(e.target, createPointer(utils.events.CANCEL, e));
 	}
 
 	/**
@@ -153,9 +145,8 @@ define([
 	 *
 	 * @param e
 	 */
-	function msGotPointerCapture(e) {
-		var syntheticEvent = createPointer(utils.events.GOTCAPTURE, e);
-		utils.dispatchEvent(e.target, syntheticEvent);
+	function msGotPointerCapture(e){
+		utils.dispatchEvent(e.target, createPointer(utils.events.GOTCAPTURE, e));
 	}
 
 	/**
@@ -163,9 +154,8 @@ define([
 	 *
 	 * @param e
 	 */
-	function msLostPointerCapture(e) {
-		var syntheticEvent = createPointer(utils.LOSTCAPTURE, e);
-		utils.dispatchEvent(e.target, syntheticEvent);
+	function msLostPointerCapture(e){
+		utils.dispatchEvent(e.target, createPointer(utils.LOSTCAPTURE, e));
 	}
 
 	return {
@@ -174,7 +164,7 @@ define([
 		 *
 		 * @param targetElement
 		 */
-		registerHandlers: function (targetElement) {
+		registerHandlers: function(targetElement){
 			targetElement = targetElement || window.document;
 			utils.addEventListener(targetElement, msPointerEvents.MSPointerDown, msPointerDown, true);
 			utils.addEventListener(targetElement, msPointerEvents.MSPointerMove, msPointerMove, true);
@@ -191,7 +181,7 @@ define([
 		 *
 		 * @param targetElement
 		 */
-		deregisterHandlers: function (targetElement) {
+		deregisterHandlers: function(targetElement){
 			utils.removeEventListener(targetElement, msPointerEvents.MSPointerDown, msPointerDown, true);
 			utils.removeEventListener(targetElement, msPointerEvents.MSPointerMove, msPointerMove, true);
 			utils.removeEventListener(targetElement, msPointerEvents.MSPointerUp, msPointerUp, true);

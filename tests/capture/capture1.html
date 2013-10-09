@@ -8,14 +8,10 @@
 	<meta name="viewport"
 		  content="width=device-width, initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
 	<meta name="apple-mobile-web-app-capable" content="yes">
-
-	<script>var require = {baseUrl:"../../.."}</script>
-	<script type="text/javascript" src="../../../requirejs/require.js"></script>
-
 	<title>Pointer Events: capture > capture1</title>
 
 	<style>
-		html,body {
+		html, body {
 			height: 100%;
 			width: 100%;
 			margin: 0;
@@ -25,6 +21,7 @@
 			font-size: 100%;
 			background-color: #000000;
 		}
+
 		#container {
 			height: 200px;
 			width: 200px;
@@ -57,6 +54,7 @@
 			border-radius: 10%;
 			cursor: pointer;
 		}
+
 		.btn:active {
 			border-color: red;
 			background-color: #0000ff;
@@ -77,11 +75,13 @@
 		}
 	</style>
 
+	<script>var require = {baseUrl: "../../.."}</script>
+	<script type="text/javascript" src="../../../requirejs/require.js"></script>
 	<script type="text/javascript">
 		requirejs([
 			"pointer/events",
 			"domReady/domReady!"
-		], function (pointer) {
+		], function(pointer){
 			var msgArea = document.getElementById("msgArea");
 
 			document.getElementById("capturedBtn").addEventListener("pointerdown", function(event){
@@ -103,7 +103,7 @@
 				logit(event.target.id + ":CAPTURE:CLICK !");
 			});
 
-			document.body.addEventListener("pointermove", function (event){
+			document.body.addEventListener("pointermove", function(event){
 				logit(event.target.id + ":pointermove (" + event.clientX + "/" + event.clientY + ")");
 			});
 
@@ -113,13 +113,14 @@
 			}
 		});
 	</script>
+
 </head>
 <body id="body">
-	<div id="container" data-touch-action="none">Press inside a button, then move outside and over the other button.
-		<div id="Btn" class="btn">NO CAPTURE</div>
-		&#160;
-		<div id="capturedBtn" class="btn">CAPTURE</div>
-	</div>
-	<div id="msgArea">== LOG ==</div>
+<div id="container" data-touch-action="none">Press inside a button, then move outside and over the other button.
+	<div id="Btn" class="btn">NO CAPTURE</div>
+	&#160;
+	<div id="capturedBtn" class="btn">CAPTURE</div>
+</div>
+<div id="msgArea">== LOG ==</div>
 </body>
 </html>

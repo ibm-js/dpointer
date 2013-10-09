@@ -4,7 +4,7 @@
  * @param trackingAreaElement
  * @constructor
  */
-EventTracker = function (tableLogElement, trackingAreaElement) {
+EventTracker = function(tableLogElement, trackingAreaElement){
 	this.tableLogElement = tableLogElement;
 	this.trackingAreaElement = trackingAreaElement;
 
@@ -27,7 +27,7 @@ EventTracker = function (tableLogElement, trackingAreaElement) {
 	var minCell2Display = 10;
 
 	var eventLogColumns = ["eventType", "targetElt", "bubble", "pointerInfo", "clientCoord", "buttonButtonsWhich", "currentTarget", "relatedTarget"];
-	var EventLogEntry = function (event, touch) {
+	var EventLogEntry = function(event, touch){
 		this.eventType = event.type;
 		this.targetElt = event.target.id;
 		this.bubble = event.bubbles;
@@ -43,29 +43,29 @@ EventTracker = function (tableLogElement, trackingAreaElement) {
 		index: -1,
 		// yellow, blue, red, green, white
 		colors: ["#FFFF00", "#0000FF", "#FF0000", "#00FF00", "#FFFFFF"],
-		get: function (pointerId) {
+		get: function(pointerId){
 			return ( (this[pointerId]) || ((this[pointerId]) = this.next()));
 		},
-		next: function () {
+		next: function(){
 			this.index = ((this.colors.length - this.index) == 1) ? 0 : (this.index + 1);
 			return (this.colors[this.index]);
 		}
 	};
 
 	// private
-	function eventListener(event) {
+	function eventListener(event){
 		var type = event.type;
 		var touch, l, i;
-		if (!EventTracker.displayMouseEvents && type.match("^mouse")) return true;
-		if (!EventTracker.displayPointerEvents && type.match("^(pointer|got|lost)")) return true;
-		if (!EventTracker.displayMSPointerEvents && type.match("^MS")) return true;
+		if(!EventTracker.displayMouseEvents && type.match("^mouse")) return true;
+		if(!EventTracker.displayPointerEvents && type.match("^(pointer|got|lost)")) return true;
+		if(!EventTracker.displayMSPointerEvents && type.match("^MS")) return true;
 		switch (type) {
 			case "touchstart":
 			case "touchmove":
-				if (preventDefaultElements[event.target.id]) event.preventDefault();
+				if(preventDefaultElements[event.target.id]) event.preventDefault();
 			case "touchend":
 			case "touchcancel":
-				if (EventTracker.displayTouchEvents) {
+				if(EventTracker.displayTouchEvents){
 					for (l = event.changedTouches.length, i = 0; i < l; i++) {
 						touch = event.changedTouches.item(i);
 						logEvent(new EventLogEntry(event, touch));
@@ -79,15 +79,15 @@ EventTracker = function (tableLogElement, trackingAreaElement) {
 		return true;
 	}
 
-	function logEvent(eventlogEntry) {
+	function logEvent(eventlogEntry){
 		// limit the number of row to save resources, otherwise some browser cancel events at some point.
-		if (tableLogElement.rows.length == maxRow) tableLogElement.deleteRow(maxRow - 1);
+		if(tableLogElement.rows.length == maxRow) tableLogElement.deleteRow(maxRow - 1);
 		var row, i , cell, arg;
 		// add a new row at the beginning
 		row = tableLogElement.insertRow(0);
 		// assign/get pointer color
 		var pid = eventlogEntry.pointerId;
-		if (pid && (pid != "") && (eventlogEntry.pointerType != '')) {
+		if(pid && (pid != "") && (eventlogEntry.pointerType != '')){
 			row.style.color = PointerColor.get(pid);
 			row.style.backgroundColor = "#888888";
 		}
@@ -97,10 +97,10 @@ EventTracker = function (tableLogElement, trackingAreaElement) {
 		cell.style["text-align"] = "right";
 		for (i = eventLogColumns.length - 1; i >= 0; i--) {
 			arg = eventLogColumns[i];
-			if ((arg === "eventType") && (eventlogEntry[arg].indexOf("click") == 0 || eventlogEntry[arg].indexOf("dblclick") == 0)) {
+			if((arg === "eventType") && (eventlogEntry[arg].indexOf("click") == 0 || eventlogEntry[arg].indexOf("dblclick") == 0)){
 				row.style.color = "#FF0000";
 				cell = row.insertCell(1).innerHTML = "<i>" + eventlogEntry[arg] + "</i>";
-			} else {
+			}else{
 				cell = row.insertCell(1).innerHTML = eventlogEntry[arg];
 			}
 		}
@@ -111,15 +111,15 @@ EventTracker = function (tableLogElement, trackingAreaElement) {
 		eventlogEntry = null;
 	}
 
-	function logInfo(info, desc) {
+	function logInfo(info, desc){
 		var row = tableLogElement.insertRow(0);
 		row.insertCell(0).innerHTML = info;
 		row.insertCell(1).innerHTML = desc;
 	}
 
-	function getDelay() {
+	function getDelay(){
 		var time = 0;
-		if (lastEventTS != 0) {
+		if(lastEventTS != 0){
 			time = ((new Date()).getTime()) - lastEventTS;
 		}
 		lastEventTS = (new Date()).getTime();
@@ -127,26 +127,26 @@ EventTracker = function (tableLogElement, trackingAreaElement) {
 	}
 
 	// public
-	this.start = function () {
-		events.forEach(function (eventType) {
+	this.start = function(){
+		events.forEach(function(eventType){
 			trackingAreaElement.addEventListener(eventType, eventListener, true);
 		});
 	};
 
-	this.clearLogTable = function () {
+	this.clearLogTable = function(){
 		for (var l = this.tableLogElement.rows.length; l > 0; l--) {
 			this.tableLogElement.deleteRow(0);
 		}
 		lastEventTS = 0;
 	};
 
-	this.log = function (msg) {
+	this.log = function(msg){
 		var row = tableLogElement.insertRow(0);
 		row.insertCell(0).innerHTML = "==> ";
 		row.insertCell(1).innerHTML = msg;
 	};
 
-	this.displayInfo = function () {
+	this.displayInfo = function(){
 		var DOM4SUPPORT = false;
 		try {
 			(new MouseEvent("mousedown", {}));
@@ -154,37 +154,40 @@ EventTracker = function (tableLogElement, trackingAreaElement) {
 		} catch (error) {
 		}
 		this.clearLogTable();
+		var eventInfo = document.createEvent("MouseEvents");
 		try {
-			logInfo("DOM4 MouseEvent", DOM4SUPPORT);
-			logInfo("Event.defaultPrevented", document.createEvent("MouseEvents").defaultPrevented !== undefined);
-			logInfo("Event.isTrusted", document.createEvent("MouseEvents").isTrusted !== undefined);
-			logInfo("Event.buttons", document.createEvent("MouseEvents").buttons !== undefined);
+			logInfo("HTMLElement.setAttribute", ('setAttribute' in document.body));
+			logInfo("new MouseEvent(...) support", DOM4SUPPORT);
+			logInfo("HTMLElement.onmouseleave", ('onmouseleave' in document.body));
+			logInfo("MouseEvents.defaultPrevented", eventInfo.defaultPrevented !== undefined);
+			logInfo("MouseEvents.isTrusted", eventInfo.isTrusted !== undefined);
+			logInfo("MouseEvents.buttons", eventInfo.buttons !== undefined);
+			logInfo("MouseEvents.stopImmediatePropagation", Boolean(eventInfo.stopImmediatePropagation));
 			logInfo("Function.bind", Boolean(Function.bind));
-			logInfo("stopImmediatePropagation", Boolean(document.createEvent('MouseEvent').stopImmediatePropagation));
-			logInfo("WebKitMutationObserver", Boolean(window.WebKitMutationObserver));
-			logInfo("MutationObserver", Boolean(window.MutationObserver));
+			logInfo("window.WebKitMutationObserver", Boolean(window.WebKitMutationObserver));
+			logInfo("window.MutationObserver", Boolean(window.MutationObserver));
 			logInfo("hasTouchEvents", ("ontouchstart" in document));
-			logInfo("msPointerEnabled", Boolean(window.navigator.msPointerEnabled));
-			logInfo("pointerEnabled", Boolean(window.navigator.pointerEnabled));
-			logInfo("user agent", navigator.userAgent);
+			logInfo("window.navigator.msPointerEnabled", Boolean(window.navigator.msPointerEnabled));
+			logInfo("window.navigator.pointerEnabled", Boolean(window.navigator.pointerEnabled));
+			logInfo("navigator.userAgent", navigator.userAgent);
 		} catch (error) {
 			logInfo("Error", error);
 		}
 	};
 
-	this.overflowOnElement = function (elementId, enableIt) {
+	this.overflowOnElement = function(elementId, enableIt){
 		log("=> Set overflow", elementId, enableIt);
 		var htmlElt = document.getElementById(elementId);
-		if (!htmlElt) alert("Unable to find element named [" + elementId + "]");
+		if(!htmlElt) alert("Unable to find element named [" + elementId + "]");
 		var saveDisplay = htmlElt.style.display; // trick to force overflow refresh
 		htmlElt.style.display = "none";
 		htmlElt.style.overflow = (enableIt ? "auto" : "hidden");
 		htmlElt.style.display = saveDisplay;
 	};
 
-	this.preventDefaultOnElement = function (elementId, enableIt) {
+	this.preventDefaultOnElement = function(elementId, enableIt){
 		var htmlElt = document.getElementById(elementId);
-		if (!htmlElt) alert("Unable to find element named [" + elementId + "]");
+		if(!htmlElt) alert("Unable to find element named [" + elementId + "]");
 		preventDefaultElements[elementId] = enableIt;
 	}
 };

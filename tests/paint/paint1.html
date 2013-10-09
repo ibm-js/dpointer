@@ -19,14 +19,10 @@
 	<meta name="viewport"
 		  content="width=device-width, initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
 	<meta name="apple-mobile-web-app-capable" content="yes">
-
-	<script>var require = {baseUrl:"../../.."}</script>
-	<script type="text/javascript" src="../../../requirejs/require.js"></script>
-
 	<title>Pointer Events: tests > paint1</title>
 
 	<style>
-		html,body {
+		html, body {
 			height: 100%;
 			width: 100%;
 			margin: 0;
@@ -35,6 +31,7 @@
 			overflow: hidden;
 			font-size: 100%;
 		}
+
 		#drawingArea {
 			height: 100%;
 			width: 100%;
@@ -46,47 +43,53 @@
 		}
 	</style>
 
+	<script>var require = {baseUrl: "../../.."}</script>
+	<script type="text/javascript" src="../../../requirejs/require.js"></script>
 	<script type="text/javascript">
 		requirejs([
 			"pointer/events",
 			"domReady/domReady!"
-		], function (pointer) {
-
-			var canvas = document.getElementById("drawingArea");
-			var context = context = canvas.getContext("2d");
-			canvas.height = window.innerHeight;
-			canvas.width = window.innerWidth;
-
-
-			// catch Pointer Move events and draw according to Pointer position
-			canvas.addEventListener("pointermove", function (event) {
-				if (event.buttons > 0){
-					context.fillStyle = PointerColor.get(event.pointerId);
-					context.fillRect(event.clientX, event.clientY, 5, 5);
-				}
-			});
-
-			// reset canvas on orientation change
-			window.addEventListener("resize", function () {
+		], function(pointer){
+			try {
+				var canvas = document.getElementById("drawingArea");
+				var context = context = canvas.getContext("2d");
 				canvas.height = window.innerHeight;
 				canvas.width = window.innerWidth;
-			});
 
-			var PointerColor = {
-				index: -1,
-				colors: ["#FFFF00", "#0000FF", "#FF0000", "#00FF00", "#FFFFFF"], // yellow, blue, red, green, white
-				get: function (pointerId) {
-					return ( (this[pointerId]) || ((this[pointerId]) = this.next()));
-				},
-				next: function () {
-					this.index = ((this.colors.length - this.index) == 1) ? 0 : (this.index + 1);
-					return (this.colors[this.index]);
-				}
-			};
+				// catch Pointer Move events and draw according to Pointer position
+				canvas.addEventListener("pointermove", function(event){
+					if(event.buttons > 0){
+						context.fillStyle = PointerColor.get(event.pointerId);
+						context.fillRect(event.clientX, event.clientY, 5, 5);
+					}
+				});
+
+				// reset canvas on orientation change
+				window.addEventListener("resize", function(){
+					canvas.height = window.innerHeight;
+					canvas.width = window.innerWidth;
+				});
+
+				var PointerColor = {
+					index: -1,
+					colors: ["#FFFF00", "#0000FF", "#FF0000", "#00FF00", "#FFFFFF"], // yellow, blue, red, green, white
+					get: function(pointerId){
+						return ( (this[pointerId]) || ((this[pointerId]) = this.next()));
+					},
+					next: function(){
+						this.index = ((this.colors.length - this.index) == 1) ? 0 : (this.index + 1);
+						return (this.colors[this.index]);
+					}
+				};
+			} catch (error) {
+				alert(error);
+			}
 		});
+
 	</script>
+
 </head>
 <body>
-	<canvas id="drawingArea" data-touch-action="none">Canvas not supported?</canvas>
+<canvas id="drawingArea" data-touch-action="none">Canvas not supported?</canvas>
 </body>
 </html>

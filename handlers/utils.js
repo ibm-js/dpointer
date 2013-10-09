@@ -7,8 +7,7 @@ define([
 	"use strict";
 
 	var utils = {
-		// pointer events names
-		events: {
+		events: { // pointer events names
 			DOWN: "pointerdown",
 			UP: "pointerup",
 			CANCEL: "pointercancel",
@@ -20,8 +19,7 @@ define([
 			GOTCAPTURE: "gotpointercapture",
 			LOSTCAPTURE: "lostpointercapture"
 		},
-		// touch action
-		TouchAction: {
+		TouchAction: { // touch action
 			ATTR_NAME: "data-touch-action",
 			AUTO: 0,  // 0000
 			PAN_X: 1, // 0001
@@ -45,8 +43,8 @@ define([
 	 * from its ancestors.
 	 * To be used only when underlying native events are touch events.
 	 *
-	 * @param targetNode
-	 * @return Number (auto: 0, pan-x:1, pan-y:2, none: 3)
+	 * @param targetNode DOM element
+	 * @return Number touch action value which applies to the element (auto: 0, pan-x:1, pan-y:2, none: 3)
 	 */
 	utils.getTouchAction = function(targetNode){
 		// touch-action default value: allow default behavior (no prevent default on touch).
@@ -72,33 +70,11 @@ define([
 	};
 
 	/**
-	 * handler for Click event.
-	 *
-	 * @param e
-	 * @returns {boolean}
-	 */
-	function clickHandler(e){
-		//todo: normalize button/buttons/which values for click/dblclick events
-		if(utils.hasTouchEvents()){
-			// (7) Android 4.1.1 generates a click after touchend even when touchstart is prevented.
-			// if we receive a native click at an element with touch action disabled we just have to absorb it.
-			// (fixed in Android 4.1.2+)
-			if(utils.isNativeClickEvent(e) && (utils.getTouchAction(e.target) != utils.TouchAction.AUTO)){
-				e.preventDefault();
-				e.stopImmediatePropagation();
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
 	 * Pointer Event constructor.
 	 *
-	 * @param pointerType pointer type
-	 * @param props properties
+	 * @param pointerType pointer event type name ("pointerdown", "pointerup"...)
+	 * @param props properties event properties (optional)
 	 * @returns {Event} a  Pointer event
-	 * @constructor description
 	 */
 	utils.Pointer = function(pointerType, props){
 		props = props || {};
@@ -140,7 +116,7 @@ define([
 				},
 				enumerable: true});
 		}
-		// Pointer events spec
+		// Pointer events default values:
 		// http://www.w3.org/TR/pointerevents/#pointerevent-interface
 		Object.defineProperties(e, {
 				pointerId: { value: props.pointerId || 0, enumerable: true},
@@ -160,9 +136,9 @@ define([
 	/**
 	 * creates a synthetic click event with properties based on another event.
 	 *
-	 * @param sourceEvent
-	 * @param dblClick set to true to generate a dblclick event
-	 * @returns {Event}
+	 * @param sourceEvent the underlying event which contributes to the creation of this event.
+	 * @param dblClick set to true to generate a dblclick event, otherwise a click event is generated
+	 * @returns {Event} the event (click or dblclick)
 	 */
 	utils.createSyntheticClick = function(sourceEvent, dblClick){
 		var e = document.createEvent('MouseEvents');
@@ -188,41 +164,26 @@ define([
 			sourceEvent.altKey,
 			sourceEvent.shiftKey,
 			sourceEvent.metaKey,
-			0, // touch: always 0
-			null
-		);
+			0, // button property (touch: always 0)
+			null); // no related target
 		return e;
 	};
 
 	/**
 	 * returns true for a native click event, false for a synthetic click event.
 	 *
-	 * @param e
-	 * @returns {boolean|*}
+	 * @param e an event
+	 * @returns true if native event, false for synthetic event.
 	 */
 	utils.isNativeClickEvent = function(e){
 		return (e.isTrusted === undefined || e.isTrusted);
 	};
 
 	/**
-	 * register click handler.
-	 */
-	utils.registerClickHandler = function(){
-		utils.addEventListener(window.document, "click", clickHandler, true);
-	};
-
-	/**
-	 * deregister click handler
-	 */
-	utils.deregisterClickHandler = function(){
-		utils.removeEventListener(window.document, "click", clickHandler, true);
-	};
-
-	/**
 	 * returns the value of MouseEvent.buttons from MouseEvent.which.
 	 *
-	 * @param whichValue
-	 * @returns {*}
+	 * @param whichValue value of a MouseEvent.which property
+	 * @returns Number the value MouseEvent.buttons should have
 	 */
 	utils.which2buttons = function(whichValue){
 		switch (whichValue) {
@@ -243,10 +204,10 @@ define([
 	 * Registers the event handler eventListener on target element targetElement
 	 * for events of type eventName.
 	 *
-	 * @param targetElement
-	 * @param eventName
-	 * @param eventListener
-	 * @param useCapture
+	 * @param targetElement DOM element to attach the event listener
+	 * @param eventName the event type name ("mousedown", "touchstart"...)
+	 * @param eventListener an event listener function
+	 * @param useCapture set to true to set the handler at the event capture phase
 	 */
 	utils.addEventListener = function(targetElement, eventName, eventListener, useCapture){
 		targetElement.addEventListener(eventName, eventListener, useCapture);
@@ -255,21 +216,20 @@ define([
 	/**
 	 * Unregister an existing handler.
 	 *
-	 * @param targetElement
-	 * @param eventName
-	 * @param eventListener
-	 * @param useCapture
+	 * @param targetElement DOM element where the event listener is attached
+	 * @param eventName  the event type name ("mousedown", "touchstart"...)
+	 * @param eventListener the event listener function to remove
+	 * @param useCapture set to true if the handler is set at the event capture phase
 	 */
 	utils.removeEventListener = function(targetElement, eventName, eventListener, useCapture){
 		targetElement.removeEventListener(eventName, eventListener, useCapture);
 	};
 
 	/**
-	 * Dispatch event.
+	 * Dispatch an event.
 	 *
-	 * @param targetElement
-	 * @param event
-	 * @returns {*}
+	 * @param targetElement DOM element
+	 * @param event event
 	 */
 		// possible optimization:
 		// Chrome: use getEventListeners() to dispatch event ONLY if there is a listener for the target event type
@@ -279,16 +239,18 @@ define([
 			// handle case when  moving a pointer outside the window (elementFromTouch return null)
 			return false;
 		}
-		if(!(targetElement.dispatchEvent )) throw new Error("dispatchEvent not supported on targetElement");
+		if(!(targetElement.dispatchEvent )){
+			throw new Error("dispatchEvent not supported on targetElement");
+		}
 		return targetElement.dispatchEvent(event);
 	};
 
 	/**
 	 * Dispatch pointerleave events.
 	 *
-	 * @param target
-	 * @param relatedTarget
-	 * @param syntheticEvent
+	 * @param target DOM element
+	 * @param relatedTarget DOM element
+	 * @param syntheticEvent the pointerleave event to dispatch
 	 */
 	utils.dispatchLeaveEvents = function(target, relatedTarget, syntheticEvent){
 		if(target != null && relatedTarget != null && target != relatedTarget && !(target.compareDocumentPosition(relatedTarget) & 16 )){
@@ -300,9 +262,9 @@ define([
 	/**
 	 * Dispatch pointerenter events.
 	 *
-	 * @param target
-	 * @param relatedTarget
-	 * @param syntheticEvent
+	 * @param target DOM element
+	 * @param relatedTarget DOM element
+	 * @param syntheticEvent the pointerenter event to dispatch
 	 */
 	utils.dispatchEnterEvents = function(target, relatedTarget, syntheticEvent){
 		if(target != null && relatedTarget != null && target != relatedTarget && !(target.compareDocumentPosition(relatedTarget) & 16)){
@@ -312,25 +274,38 @@ define([
 	};
 
 	/**
-	 * Returns true if user agent handles native touch events.
+	 * register click handler.
 	 */
-	utils.hasTouchEvents = function(){
-		return ("ontouchstart" in document);
+	utils.registerClickHandler = function(){
+		utils.addEventListener(window.document, "click", clickHandler, true);
 	};
 
 	/**
-	 * Returns true if user agent handles  Pointer Events as per W3C specification.
+	 * deregister click handler
 	 */
-	utils.hasPointerEnabled = function(){
-		return !!window.navigator.pointerEnabled;
+	utils.deregisterClickHandler = function(){
+		utils.removeEventListener(window.document, "click", clickHandler, true);
 	};
 
 	/**
-	 * Returns true if user agent handles MSPointer Events.
+	 * handler for Click events.
+	 *
+	 * @param e click event
 	 */
-	utils.hasMSPointerEnabled = function(){
-		return !!window.navigator.msPointerEnabled;
-	};
+	function clickHandler(e){
+		//todo: normalize button/buttons/which values for click/dblclick events
+		if(utils.hasTouchEvents()){
+			// (7) Android 4.1.1 generates a click after touchend even when touchstart is prevented.
+			// if we receive a native click at an element with touch action disabled we just have to absorb it.
+			// (fixed in Android 4.1.2+)
+			if(utils.isNativeClickEvent(e) && (utils.getTouchAction(e.target) != utils.TouchAction.AUTO)){
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				return false;
+			}
+		}
+		return true;
+	}
 
 	return utils;
 });

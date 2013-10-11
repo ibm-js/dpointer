@@ -18,7 +18,10 @@ define([
 			TAP_DELAY: 250, // maximum delay between 2 clicks in ms, after this delay a dblclick won't be generated
 			lastClickTS: 0, // timestamp of the last click
 			hasFirstClick: false, // are we waiting for a second click?
-			targetElement: null // element which received the click
+			targetElement: null, // element which received the click
+			isEligible: function(target){
+				return this.hasFirstClick && (this.targetElement == target) && ((new Date().getTime()) - this.lastClickTS < this.TAP_DELAY);
+			}
 		};
 
 	/**
@@ -49,7 +52,9 @@ define([
 				TouchTracker.unregister(lastTouch.identifier);
 			}else{
 				if(touchAction != utils.TouchAction.AUTO){
-					e.preventDefault(); // prevent default action
+					if(DoubleTap.isEligible(touch.target)){
+						e.preventDefault(); // prevent zoom on double tap
+					}
 				}
 				// primary touch pointer must be defined in case an event handler on pointerdown decides
 				// to set a pointer capture on the element, so we must:
@@ -250,9 +255,7 @@ define([
 			// here we choose to fire click/dblclick only for primary pointer
 			utils.dispatchEvent(target, utils.createSyntheticClick(touch));
 			// dispatch double tap if eligible
-			if(DoubleTap.hasFirstClick
-				&& (DoubleTap.targetElement == target)
-				&& ((new Date().getTime()) - DoubleTap.lastClickTS < DoubleTap.TAP_DELAY)){
+			if(DoubleTap.isEligible(target)){
 				utils.dispatchEvent(target, utils.createSyntheticClick(touch, true));
 				DoubleTap.hasFirstClick = false;
 			}else{

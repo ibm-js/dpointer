@@ -234,7 +234,7 @@ define([
 		props.pointerId = touch.identifier + 2; // avoid id collision: 1 is reserved for mouse events mapping
 		props.pointerType = 'touch';
 		props.isPrimary = TouchTracker.isPrimary(touch.identifier);
-		return new utils.Pointer(pointerType, props);
+		return new utils.Pointer(pointerType, touchEvent, props);
 	}
 
 	/**

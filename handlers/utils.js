@@ -31,7 +31,7 @@ define([
 
 	// Check if MouseEvent constructor is supported.
 	try {
-		var event = new MouseEvent('mousedown', {});
+		new MouseEvent('mousedown', {});
 		utils.SUPPORT_MOUSE_EVENT_CONSTRUCTOR = true;
 	} catch (e) {
 	}
@@ -73,10 +73,11 @@ define([
 	 * Pointer Event constructor.
 	 *
 	 * @param pointerType pointer event type name ("pointerdown", "pointerup"...)
+	 * @param nativeEvent underlying event which contributes to this pointer event.
 	 * @param props properties event properties (optional)
 	 * @returns {Event} a  Pointer event
 	 */
-	utils.Pointer = function(pointerType, props){
+	utils.Pointer = function(pointerType, nativeEvent, props){
 		props = props || {};
 		props.bubbles = ('bubbles' in props) ? props.bubbles : true;
 		props.cancelable = (props.cancelable) || true;
@@ -130,6 +131,15 @@ define([
 				isPrimary: {value: props.isPrimary || false, enumerable: true}
 			}
 		);
+		var oldStopPropagation = e.stopPropagation, oldPreventDefault = e.preventDefault;
+		e.stopPropagation = function(){
+			nativeEvent.stopPropagation();
+			oldStopPropagation.apply(this);
+		};
+		e.preventDefault = function(){
+			nativeEvent.preventDefault();
+			oldPreventDefault.apply(this);
+		};
 		return e;
 	};
 
@@ -294,7 +304,7 @@ define([
 	 */
 	function clickHandler(e){
 		//todo: normalize button/buttons/which values for click/dblclick events
-		if(utils.hasTouchEvents()){
+		if('ontouchstart' in document){//todo: should use has() module instead and
 			// (7) Android 4.1.1 generates a click after touchend even when touchstart is prevented.
 			// if we receive a native click at an element with touch action disabled we just have to absorb it.
 			// (fixed in Android 4.1.2+)

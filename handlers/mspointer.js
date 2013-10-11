@@ -135,7 +135,7 @@ define([
 		if((props.button == -1) && (props.pointerType == "touch")){
 			props.buttons = 1;
 		}
-		return new utils.Pointer(pointerType, props);
+		return new utils.Pointer(pointerType, msPointerEvent, props);
 	}
 
 	/**

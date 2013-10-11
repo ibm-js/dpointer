@@ -124,7 +124,7 @@ define([
 		// on mouse move with no buttons pressed, buttonValue should be -1 but browsers implement
 		// with unsigned int: http://www.w3.org/TR/DOM-Level-3-Events/
 		// so we set it to 0.
-		if(mouseEvent.type == ("mousemove" || "mouseup")){
+		if(mouseEvent.type == "mousemove" || mouseEvent.type == "mouseup"){
 			buttonValue = 0;
 		}
 		props.button = buttonValue;
@@ -139,7 +139,7 @@ define([
 		props.pointerId = 1;
 		props.pointerType = 'mouse';
 		props.isPrimary = true;
-		return new utils.Pointer(pointerType, props);
+		return new utils.Pointer(pointerType, mouseEvent, props);
 	}
 
 	var MouseTracker = {

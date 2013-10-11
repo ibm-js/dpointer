@@ -28,7 +28,13 @@ EventTracker = function(tableLogElement, trackingAreaElement){
 
 	var eventLogColumns = ["eventType", "targetElt", "bubble", "pointerInfo", "clientCoord", "buttonButtonsWhich", "currentTarget", "relatedTarget"];
 	var EventLogEntry = function(event, touch){
-		this.eventType = event.type;
+
+		if(event.type == "click" || event.type == "dblclick" ){
+			// trusted = T , untrusted = U , undefined = ?
+			this.eventType = event.type + ((event.isTrusted===undefined)?" (?)":((event.isTrusted)?" (T)":" (U)"));
+		} else {
+			this.eventType = event.type;
+		}
 		this.targetElt = event.target.id;
 		this.bubble = event.bubbles;
 		this.pointerType = (event.pointerType ? ('(' + event.pointerType + ')') : '');

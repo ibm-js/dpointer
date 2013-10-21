@@ -92,7 +92,7 @@ define([
 	 * @param e event
 	 */
 	function msLostPointerCapture(e) {
-		utils.dispatchEvent(e.target, createPointer(utils.LOSTCAPTURE, e, {}));
+		utils.dispatchEvent(e.target, createPointer(utils.events.LOSTCAPTURE, e, {}));
 	}
 
 	/**

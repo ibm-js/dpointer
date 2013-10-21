@@ -32,15 +32,7 @@ define([
 		if (this._targetElement) {
 			return;// already initialized
 		}
-		if (feature.pointer) {
-			//todo: test and validate with IE11 RTM
-			//window.navigator.pointerEnabled not yet supported...
-			if (feature.mspointer) {
-				mspointer.registerHandlers(targetElement);//...fallback to prefixed MSPointer events.
-			} else {
-				mouse.registerHandlers(targetElement);//...fallback to mouse events.
-			}
-		} else {
+		if (!feature.pointer) {
 			if (feature.mspointer) {
 				mspointer.registerHandlers(targetElement);
 			} else {

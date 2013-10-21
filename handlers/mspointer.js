@@ -4,19 +4,19 @@
  * http://msdn.microsoft.com/en-us/library/windows/apps/hh441233.aspx
  */
 define([
-	"./utils"
-], function(utils){
-	"use strict";
+	'./utils'
+], function (utils) {
+	'use strict';
 
 	var msPointerEvents = {
-		MSPointerDown: "MSPointerDown",
-		MSPointerMove: "MSPointerMove",
-		MSPointerUp: "MSPointerUp",
-		MSPointerOut: "MSPointerOut",
-		MSPointerOver: "MSPointerOver",
-		MSPointerCancel: "MSPointerCancel",
-		MSGotPointerCapture: "MSGotPointerCapture",
-		MSLostPointerCapture: "MSLostPointerCapture"
+		MSPointerDown: 'MSPointerDown',
+		MSPointerMove: 'MSPointerMove',
+		MSPointerUp: 'MSPointerUp',
+		MSPointerOut: 'MSPointerOut',
+		MSPointerOver: 'MSPointerOver',
+		MSPointerCancel: 'MSPointerCancel',
+		MSGotPointerCapture: 'MSGotPointerCapture',
+		MSLostPointerCapture: 'MSLostPointerCapture'
 	};
 
 	/**
@@ -24,8 +24,8 @@ define([
 	 *
 	 * @param e event
 	 */
-	function msPointerDown(e){
-		utils.dispatchEvent(e.target, createPointer(utils.events.DOWN, e));
+	function msPointerDown(e) {
+		utils.dispatchEvent(e.target, createPointer(utils.events.DOWN, e, {}));
 	}
 
 	/**
@@ -33,8 +33,8 @@ define([
 	 *
 	 * @param e event
 	 */
-	function msPointerMove(e){
-		utils.dispatchEvent(e.target, createPointer(utils.events.MOVE, e));
+	function msPointerMove(e) {
+		utils.dispatchEvent(e.target, createPointer(utils.events.MOVE, e, {}));
 	}
 
 	/**
@@ -42,8 +42,8 @@ define([
 	 *
 	 * @param e event
 	 */
-	function msPointerUp(e){
-		utils.dispatchEvent(e.target, createPointer(utils.events.UP, e));
+	function msPointerUp(e) {
+		utils.dispatchEvent(e.target, createPointer(utils.events.UP, e, {}));
 	}
 
 	/**
@@ -51,8 +51,8 @@ define([
 	 *
 	 * @param e event
 	 */
-	function msPointerOut(e){
-		utils.dispatchEvent(e.target, createPointer(utils.events.OUT, e));
+	function msPointerOut(e) {
+		utils.dispatchEvent(e.target, createPointer(utils.events.OUT, e, {}));
 		// generate  pointerleave events
 		utils.dispatchLeaveEvents(e.target, e.relatedTarget, createPointer(utils.events.LEAVE, e, {bubbles: false}));
 	}
@@ -62,8 +62,8 @@ define([
 	 *
 	 * @param e event
 	 */
-	function msPointerOver(e){
-		utils.dispatchEvent(e.target, createPointer(utils.events.OVER, e));
+	function msPointerOver(e) {
+		utils.dispatchEvent(e.target, createPointer(utils.events.OVER, e, {}));
 		// generate  pointerenter events
 		utils.dispatchEnterEvents(e.target, e.relatedTarget, createPointer(utils.events.ENTER, e, {bubbles: false}));
 	}
@@ -73,8 +73,8 @@ define([
 	 *
 	 * @param e event
 	 */
-	function msPointerCancel(e){
-		utils.dispatchEvent(e.target, createPointer(utils.events.CANCEL, e));
+	function msPointerCancel(e) {
+		utils.dispatchEvent(e.target, createPointer(utils.events.CANCEL, e, {}));
 	}
 
 	/**
@@ -82,8 +82,8 @@ define([
 	 *
 	 * @param e event
 	 */
-	function msGotPointerCapture(e){
-		utils.dispatchEvent(e.target, createPointer(utils.events.GOTCAPTURE, e));
+	function msGotPointerCapture(e) {
+		utils.dispatchEvent(e.target, createPointer(utils.events.GOTCAPTURE, e, {}));
 	}
 
 	/**
@@ -91,19 +91,19 @@ define([
 	 *
 	 * @param e event
 	 */
-	function msLostPointerCapture(e){
-		utils.dispatchEvent(e.target, createPointer(utils.LOSTCAPTURE, e));
+	function msLostPointerCapture(e) {
+		utils.dispatchEvent(e.target, createPointer(utils.LOSTCAPTURE, e, {}));
 	}
 
 	/**
 	 * create a synthetic pointer from a MS Pointer Event.
 	 *
-	 * @param pointerType pointer event type name ("pointerdown", "pointerup"...)
+	 * @param pointerType pointer event type name ('pointerdown', 'pointerup'...)
 	 * @param msPointerEvent the underlying ms pointer event which contributes to the creation of the pointer event.
 	 * @param props event properties (optional)
 	 * @returns {utils.Pointer}
 	 */
-	function createPointer(pointerType, msPointerEvent, props){
+	function createPointer(pointerType, msPointerEvent, props) {
 		props = props || {};
 		// Mouse events properties
 		props.bubbles = msPointerEvent.bubbles;
@@ -132,7 +132,7 @@ define([
 		props.hwTimestamp = msPointerEvent.hwTimestamp;
 		props.isPrimary = msPointerEvent.isPrimary;
 		// fix wrong button value on IE10 and IE11 preview
-		if((props.button == -1) && (props.pointerType == "touch")){
+		if ((props.button === -1) && (props.pointerType === 'touch')) {
 			props.buttons = 1;
 		}
 		return new utils.Pointer(pointerType, msPointerEvent, props);
@@ -145,16 +145,16 @@ define([
 	 * @param pointerType
 	 * @returns {*}
 	 */
-	function normalizePointerType(pointerType){
+	function normalizePointerType(pointerType) {
 		switch (pointerType) {
-			case 2:
-				return "touch";
-			case 3:
-				return "pen";
-			case 4:
-				return "mouse";
-			default:
-				return pointerType;
+		case 2:
+			return 'touch';
+		case 3:
+			return 'pen';
+		case 4:
+			return 'mouse';
+		default:
+			return pointerType;
 		}
 	}
 
@@ -164,7 +164,7 @@ define([
 		 *
 		 * @param targetElement target element for event listeners
 		 */
-		registerHandlers: function(targetElement){
+		registerHandlers: function (targetElement) {
 			targetElement = targetElement || window.document;
 			utils.addEventListener(targetElement, msPointerEvents.MSPointerDown, msPointerDown, true);
 			utils.addEventListener(targetElement, msPointerEvents.MSPointerMove, msPointerMove, true);
@@ -181,7 +181,7 @@ define([
 		 *
 		 * @param targetElement target element for event listeners
 		 */
-		deregisterHandlers: function(targetElement){
+		deregisterHandlers: function (targetElement) {
 			utils.removeEventListener(targetElement, msPointerEvents.MSPointerDown, msPointerDown, true);
 			utils.removeEventListener(targetElement, msPointerEvents.MSPointerMove, msPointerMove, true);
 			utils.removeEventListener(targetElement, msPointerEvents.MSPointerUp, msPointerUp, true);

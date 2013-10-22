@@ -1,4 +1,4 @@
-#Pointer/Events
+#Pointer/Events [![Build Status](https://travis-ci.org/ibm-dojo/dtreemap.png?branch=master)](https://travis-ci.org/ibm-dojo/pointer)
 This [repository][SPE_pointer] proposes a unified and consistent javascript events API which aims to abstract touch/pointer/mouse events across various devices/OS. 
 
 This API is a shim of the [W3C Pointer Events specification][W3C_pointer] and adds features that are out of scope of the current specification.

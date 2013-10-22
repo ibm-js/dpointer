@@ -30,11 +30,13 @@ define([
 	};
 
 	// Check if MouseEvent constructor is supported.
+	/* jshint ignore:start */
 	try {
 		new MouseEvent('mousedown', {});
 		utils.SUPPORT_MOUSE_EVENT_CONSTRUCTOR = true;
 	} catch (e) {
 	}
+	/* jshint ignore:end */
 
 	/**
 	 * With touch events there is no CSS property touch-action: Touch action
@@ -261,6 +263,7 @@ define([
 			return new MouseEvent(pointerType, props);
 		}
 		var e = document.createEvent('MouseEvents');
+		/* jshint ignore:start */
 		e.initMouseEvent(
 			pointerType,
 			(props.bubbles),
@@ -278,6 +281,7 @@ define([
 			(props.button) || 0,
 			(props.relatedTarget) ||
 				null);
+		/* jshint ignore:end */
 		return e;
 	}
 

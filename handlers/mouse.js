@@ -5,16 +5,16 @@
  * http://www.w3.org/TR/DOM-Level-3-Events/#events-mouseevent-event-order
  */
 define([
-	'./utils'
+	"./utils"
 ], function (utils) {
-	'use strict';
+	"use strict";
 
 	var MouseEvents = {
-			mousedown: 'mousedown',
-			mousemove: 'mousemove',
-			mouseout: 'mouseout',
-			mouseover: 'mouseover',
-			mouseup: 'mouseup'
+			mousedown: "mousedown",
+			mousemove: "mousemove",
+			mouseout: "mouseout",
+			mouseover: "mouseover",
+			mouseup: "mouseup"
 		},
 		isScrolling = false; // indicates if the mouse is scrolling an element with CSS overflow=auto|scroll.
 
@@ -30,7 +30,7 @@ define([
 		// if overflow CSS style is set at target element, fire a PointerCancel,
 		// then track and absorb subsequent mouse events until a mouseup occurs
 		var overflow = (window.getComputedStyle(e.target).overflow);
-		if (overflow && (overflow === 'auto' || overflow === 'scroll')) {
+		if (overflow && (overflow === "auto" || overflow === "scroll")) {
 			isScrolling = true;
 			utils.dispatchEvent(e.target, createPointer(utils.events.CANCEL, e, {}));
 		}
@@ -103,7 +103,7 @@ define([
 	/**
 	 * Create a synthetic pointer from a mouse event.
 	 *
-	 * @param pointerType pointer event type name ('pointerdown', 'pointerup'...)
+	 * @param pointerType pointer event type name ("pointerdown", "pointerup"...)
 	 * @param mouseEvent the underlying mouse event which contributes to the creation of the pointer event.
 	 * @param props event properties (optional)
 	 * @returns {utils.Pointer}
@@ -127,7 +127,7 @@ define([
 		// on mouse move with no buttons pressed, buttonValue should be -1 but browsers implement
 		// with unsigned int: http://www.w3.org/TR/DOM-Level-3-Events/
 		// so we set it to 0.
-		if (mouseEvent.type === 'mousemove' || mouseEvent.type === 'mouseup') {
+		if (mouseEvent.type === "mousemove" || mouseEvent.type === "mouseup") {
 			buttonValue = 0;
 		}
 		props.button = buttonValue;
@@ -140,7 +140,7 @@ define([
 		}
 		// Pointer Events properties
 		props.pointerId = 1;
-		props.pointerType = 'mouse';
+		props.pointerType = "mouse";
 		props.isPrimary = true;
 		return new utils.Pointer(pointerType, mouseEvent, props);
 	}
@@ -156,7 +156,7 @@ define([
 		setCapture: function (targetElement) {
 			// 1. check if pointerId is active, otw throw DOMException with the name InvalidPointerId.
 			if (!this._lastNativeEvent) {
-				throw 'InvalidPointerId';
+				throw "InvalidPointerId";
 			}
 			// 2. at least one button must be pressed
 			if (this._lastNativeEvent.buttons === 0) {
@@ -178,7 +178,7 @@ define([
 		releaseCapture: function (targetElement, implicit) {
 			// 1. check if pointerId is active, otw throw DOMException with the name InvalidPointerId.
 			if (!this._lastNativeEvent) {
-				throw 'InvalidPointerId';
+				throw "InvalidPointerId";
 			}
 			// 2. if pointer capture not set at targetElement, return
 			if (!implicit && (this._captureTarget !== targetElement)) {

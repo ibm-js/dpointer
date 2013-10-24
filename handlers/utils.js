@@ -4,23 +4,23 @@
 define([
 
 ], function () {
-	'use strict';
+	"use strict";
 
 	var utils = {
 		events: { // pointer events names
-			DOWN: 'pointerdown',
-			UP: 'pointerup',
-			CANCEL: 'pointercancel',
-			MOVE: 'pointermove',
-			OVER: 'pointerover',
-			OUT: 'pointerout',
-			ENTER: 'pointerenter',
-			LEAVE: 'pointerleave',
-			GOTCAPTURE: 'gotpointercapture',
-			LOSTCAPTURE: 'lostpointercapture'
+			DOWN: "pointerdown",
+			UP: "pointerup",
+			CANCEL: "pointercancel",
+			MOVE: "pointermove",
+			OVER: "pointerover",
+			OUT: "pointerout",
+			ENTER: "pointerenter",
+			LEAVE: "pointerleave",
+			GOTCAPTURE: "gotpointercapture",
+			LOSTCAPTURE: "lostpointercapture"
 		},
 		TouchAction: { // touch action
-			ATTR_NAME: 'data-touch-action',
+			ATTR_NAME: "data-touch-action",
 			AUTO: 0,  // 0000
 			PAN_X: 1, // 0001
 			PAN_Y: 2, // 0010
@@ -30,13 +30,11 @@ define([
 	};
 
 	// Check if MouseEvent constructor is supported.
-	/* jshint ignore:start */
 	try {
-		new MouseEvent('mousedown', {});
+		new MouseEvent("mousedown", {}); // jshint ignore:line
 		utils.SUPPORT_MOUSE_EVENT_CONSTRUCTOR = true;
 	} catch (e) {
 	}
-	/* jshint ignore:end */
 
 	/**
 	 * With touch events there is no CSS property touch-action: Touch action
@@ -54,16 +52,16 @@ define([
 		// find ancestors with "touch action" and define behavior accordingly.
 		do {
 			switch (targetNode.getAttribute && targetNode.getAttribute(utils.TouchAction.ATTR_NAME)) {
-			case 'auto':
+			case "auto":
 				nodeValue = nodeValue | utils.TouchAction.AUTO;
 				break;
-			case 'pan-x':
+			case "pan-x":
 				nodeValue = nodeValue | utils.TouchAction.PAN_X;
 				break;
-			case 'pan-y':
+			case "pan-y":
 				nodeValue = nodeValue | utils.TouchAction.PAN_Y;
 				break;
-			case 'none':
+			case "none":
 				nodeValue = nodeValue | utils.TouchAction.NONE;
 				break;
 			}
@@ -81,7 +79,7 @@ define([
 	 */
 	utils.Pointer = function (pointerType, nativeEvent, props) {
 		props = props || {};
-		props.bubbles = ('bubbles' in props) ? props.bubbles : true;
+		props.bubbles = ("bubbles" in props) ? props.bubbles : true;
 		props.cancelable = (props.cancelable) || true;
 
 		var e = createMouseEvent(pointerType, props);
@@ -99,16 +97,16 @@ define([
 	 * @returns {Event} the event (click or dblclick)
 	 */
 	utils.createSyntheticClick = function (sourceEvent, dblClick) {
-		var e = document.createEvent('MouseEvents');
+		var e = document.createEvent("MouseEvents");
 		if (e.isTrusted === undefined) { // Android 4.1.1 does not implement isTrusted
-			Object.defineProperty(e, 'isTrusted', {
+			Object.defineProperty(e, "isTrusted", {
 				value: false,
 				enumerable: true,
 				writable: false,
 				configurable: false
 			});
 		}
-		e.initMouseEvent((dblClick) ? 'dblclick' : 'click', true, // bubbles
+		e.initMouseEvent((dblClick) ? "dblclick" : "click", true, // bubbles
 			true, // cancelable
 			sourceEvent.view,
 			sourceEvent.detail,
@@ -195,7 +193,7 @@ define([
 			return false;
 		}
 		if (!(targetElement.dispatchEvent)) {
-			throw new Error('dispatchEvent not supported on targetElement');
+			throw new Error("dispatchEvent not supported on targetElement");
 		}
 		return targetElement.dispatchEvent(event);
 	};
@@ -238,14 +236,14 @@ define([
 	 * register click handler.
 	 */
 	utils.registerClickHandler = function () {
-		utils.addEventListener(window.document, 'click', clickHandler, true);
+		utils.addEventListener(window.document, "click", clickHandler, true);
 	};
 
 	/**
 	 * deregister click handler
 	 */
 	utils.deregisterClickHandler = function () {
-		utils.removeEventListener(window.document, 'click', clickHandler, true);
+		utils.removeEventListener(window.document, "click", clickHandler, true);
 	};
 
 
@@ -262,7 +260,7 @@ define([
 		if (utils.SUPPORT_MOUSE_EVENT_CONSTRUCTOR) {
 			return new MouseEvent(pointerType, props);
 		}
-		var e = document.createEvent('MouseEvents');
+		var e = document.createEvent("MouseEvents");
 		/* jshint ignore:start */
 		e.initMouseEvent(
 			pointerType,
@@ -291,14 +289,14 @@ define([
 	 * @param buttonsValue buttons property value
 	 */
 	function fixButtonsProperties(e, buttonsValue) {
-		if (!('buttons' in e)) {
-			Object.defineProperty(e, 'buttons', {
+		if (!("buttons" in e)) {
+			Object.defineProperty(e, "buttons", {
 				value: (buttonsValue || 0),
 				enumerable: true,
 				writable: false
 			});
 		} else {
-			Object.defineProperty(e, 'buttons', {
+			Object.defineProperty(e, "buttons", {
 				get: function () {
 					return buttonsValue;
 				},
@@ -322,7 +320,7 @@ define([
 			pressure: {value: props.pressure || 0, enumerable: true},
 			tiltX: {value: props.tiltX || 0, enumerable: true},
 			tiltY: {value: props.tiltY || 0, enumerable: true},
-			pointerType: {value: props.pointerType || '', enumerable: true},
+			pointerType: {value: props.pointerType || "", enumerable: true},
 			hwTimestamp: {value: props.hwTimestamp || 0, enumerable: true},
 			isPrimary: {value: props.isPrimary || false, enumerable: true}
 		});
@@ -353,7 +351,7 @@ define([
 	 */
 	function clickHandler(e) {
 		//todo: normalize button/buttons/which values for click/dblclick events
-		if ('ontouchstart' in document) {//todo: should use has() module instead and
+		if ("ontouchstart" in document) {//todo: should use has() module instead and
 			// (7) Android 4.1.1 generates a click after touchend even when touchstart is prevented.
 			// if we receive a native click at an element with touch action disabled we just have to absorb it.
 			// (fixed in Android 4.1.2+)

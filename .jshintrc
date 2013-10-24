@@ -68,6 +68,6 @@
 	"indent": 4,
 	"maxerr": 250,
 	"predef": [ "require", "define" ],
-	"quotmark": "single",
+	"quotmark": "double",
 	"maxcomplexity": 10
 }

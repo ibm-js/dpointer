@@ -5,15 +5,15 @@
  * todo: pointerenter/pointerleave: generate on capture when target is the originated element.
  */
 define([
-	'./utils'
+	"./utils"
 ], function (utils) {
-	'use strict';
+	"use strict";
 
 	var TouchEvents = {
-			touchstart: 'touchstart',
-			touchmove: 'touchmove',
-			touchend: 'touchend',
-			touchcancel: 'touchcancel'
+			touchstart: "touchstart",
+			touchmove: "touchmove",
+			touchend: "touchend",
+			touchcancel: "touchcancel"
 		},
 		DoubleTap = { // allow to track click and determine if a double click/tap event can be fired.
 			TAP_DELAY: 250, // maximum delay between 2 clicks in ms, after this delay a dblclick won't be generated
@@ -163,7 +163,7 @@ define([
 					break;
 				default:
 					// unexpected behavior:
-					// touchend event with touch action=auto and lastNativeEventType=[' + lastNativeEventType + ']');
+					// touchend event with touch action=auto and lastNativeEventType=[" + lastNativeEventType + "]");
 				}
 			} else {
 				switch (lastNativeEventType) {
@@ -186,7 +186,7 @@ define([
 					break;
 				default:
 					// unexpected behavior:
-					// 'touchend event with touch action!=auto and lastNativeEventType=[' + lastNativeEventType + ']'
+					// "touchend event with touch action!=auto and lastNativeEventType=[" + lastNativeEventType + "]"
 				}
 			}
 			TouchTracker.implicitReleaseCapture(touch.identifier);
@@ -216,7 +216,7 @@ define([
 	/**
 	 * create a synthetic Pointer event based on a touch event.
 	 *
-	 * @param pointerType pointer event type name ('pointerdown', 'pointerup'...)
+	 * @param pointerType pointer event type name ("pointerdown", "pointerup"...)
 	 * @param touchEvent the underlying touch event which contributes to the creation of the pointer event.
 	 * @param touch the underlying touch element which contributes to the creation of the pointer event.
 	 * @param props event properties (optional)
@@ -245,7 +245,7 @@ define([
 		props.which = 1;
 		// Pointer Events properties
 		props.pointerId = touch.identifier + 2; // avoid id collision: 1 is reserved for mouse events mapping
-		props.pointerType = 'touch';
+		props.pointerType = "touch";
 		props.isPrimary = TouchTracker.isPrimary(touch.identifier);
 		return new utils.Pointer(pointerType, touchEvent, props);
 	}
@@ -353,7 +353,7 @@ define([
 		setCapture: function (touchId, targetElement) {
 			// 1. check if pointer is active, otw throw DOMException with the name InvalidPointerId.
 			if (!this.isActive(touchId)) {
-				throw 'InvalidPointerId';
+				throw "InvalidPointerId";
 			}
 			// 2. pointer must have active buttons, otherwise return
 			// 3. register capture on this element.
@@ -369,7 +369,7 @@ define([
 		releaseCapture: function (touchId, targetElement, implicit) {
 			// 1. check if pointerId is active, otw throw DOMException with the name InvalidPointerId.
 			if (!this.isActive(touchId)) {
-				throw 'InvalidPointerId';
+				throw "InvalidPointerId";
 			}
 			// 2. if pointer capture not set at targetElement, return
 			if (!implicit && (this[touchId]._captureTarget !== targetElement)) {

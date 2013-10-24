@@ -4,19 +4,19 @@
  * http://msdn.microsoft.com/en-us/library/windows/apps/hh441233.aspx
  */
 define([
-	'./utils'
+	"./utils"
 ], function (utils) {
-	'use strict';
+	"use strict";
 
 	var msPointerEvents = {
-		MSPointerDown: 'MSPointerDown',
-		MSPointerMove: 'MSPointerMove',
-		MSPointerUp: 'MSPointerUp',
-		MSPointerOut: 'MSPointerOut',
-		MSPointerOver: 'MSPointerOver',
-		MSPointerCancel: 'MSPointerCancel',
-		MSGotPointerCapture: 'MSGotPointerCapture',
-		MSLostPointerCapture: 'MSLostPointerCapture'
+		MSPointerDown: "MSPointerDown",
+		MSPointerMove: "MSPointerMove",
+		MSPointerUp: "MSPointerUp",
+		MSPointerOut: "MSPointerOut",
+		MSPointerOver: "MSPointerOver",
+		MSPointerCancel: "MSPointerCancel",
+		MSGotPointerCapture: "MSGotPointerCapture",
+		MSLostPointerCapture: "MSLostPointerCapture"
 	};
 
 	/**
@@ -98,7 +98,7 @@ define([
 	/**
 	 * create a synthetic pointer from a MS Pointer Event.
 	 *
-	 * @param pointerType pointer event type name ('pointerdown', 'pointerup'...)
+	 * @param pointerType pointer event type name ("pointerdown", "pointerup"...)
 	 * @param msPointerEvent the underlying ms pointer event which contributes to the creation of the pointer event.
 	 * @param props event properties (optional)
 	 * @returns {utils.Pointer}
@@ -132,7 +132,7 @@ define([
 		props.hwTimestamp = msPointerEvent.hwTimestamp;
 		props.isPrimary = msPointerEvent.isPrimary;
 		// fix wrong button value on IE10 and IE11 preview
-		if ((props.button === -1) && (props.pointerType === 'touch')) {
+		if ((props.button === -1) && (props.pointerType === "touch")) {
 			props.buttons = 1;
 		}
 		return new utils.Pointer(pointerType, msPointerEvent, props);
@@ -148,11 +148,11 @@ define([
 	function normalizePointerType(pointerType) {
 		switch (pointerType) {
 		case 2:
-			return 'touch';
+			return "touch";
 		case 3:
-			return 'pen';
+			return "pen";
 		case 4:
-			return 'mouse';
+			return "mouse";
 		default:
 			return pointerType;
 		}

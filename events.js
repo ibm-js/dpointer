@@ -2,18 +2,18 @@
  * Pointer Events shim
  */
 define([
-	'./handlers/utils',
-	'./handlers/touch',
-	'./handlers/mouse',
-	'./handlers/mspointer'
+	"./handlers/utils",
+	"./handlers/touch",
+	"./handlers/mouse",
+	"./handlers/mspointer"
 ], function (utils, touch, mouse, mspointer) {
-	'use strict';
+	"use strict";
 
 	var pointerEvents = {_targetElement: null},
 		feature = {
 			//todo: should use has() module instead and
 			//consider loading touch and mspointer modules conditionally.
-			touch: ('ontouchstart' in document),
+			touch: ("ontouchstart" in document),
 			pointer: (!!window.navigator.pointerEnabled),
 			mspointer: (!!window.navigator.msPointerEnabled),
 			chrome: /chrome/i.test(navigator.userAgent),
@@ -137,25 +137,25 @@ define([
 	 * @param styleName should be touch-action or -ms-touch-action
 	 */
 	function insertTouchActionCSSRule(styleName) {
-		var styleElement = document.createElement('style'),
+		var styleElement = document.createElement("style"),
 			attributeName = utils.TouchAction.ATTR_NAME;
-		styleElement.textContent = '[' + attributeName + '="none"]  { ' + styleName + ': none; }' +
-			'[' + attributeName + '="auto"]  { ' + styleName + ': auto; }' +
-			'[' + attributeName + '="pan-x"] { ' + styleName + ': pan-x; }' +
-			'[' + attributeName + '="pan-y"] { ' + styleName + ': pan-y; }' +
-			'[' + attributeName + '="pan-x pan-y"],[' + styleName + '="pan-y pan-x"] ' +
-			'{ ' + styleName + ': pan-x pan-y; }';
+		styleElement.textContent = "[" + attributeName + "='none']  { " + styleName + ": none; }" +
+			"[" + attributeName + "='auto']  { " + styleName + ": auto; }" +
+			"[" + attributeName + "='pan-x'] { " + styleName + ": pan-x; }" +
+			"[" + attributeName + "='pan-y'] { " + styleName + ": pan-y; }" +
+			"[" + attributeName + "='pan-x pan-y'],[" + styleName + "='pan-y pan-x'] " +
+			"{ " + styleName + ": pan-x pan-y; }";
 		document.head.insertBefore(styleElement, document.head.firstChild);
 	}
 
 	// CSS rule when user agent implements W3C Pointer Events or when a polyfill is in place.
 	if (feature.pointer) {
-		insertTouchActionCSSRule('touch-action');
+		insertTouchActionCSSRule("touch-action");
 	}
 
 	// CSS rule for IE10 and IE11 preview
 	if (feature.mspointer) {
-		insertTouchActionCSSRule('-ms-touch-action');
+		insertTouchActionCSSRule("-ms-touch-action");
 	}
 
 	// start listening to native events

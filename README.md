@@ -41,8 +41,14 @@ This project can be integrated into any AMD capable javascript application.
 `pointerdown, pointerup, pointercancel, pointermove,`
 `pointerover, pointerout, pointerenter, pointerleave, gotpointercapture and lostpointercapture`.
 
+###Setting the Touch Action attribute
+- Programmatic: use *pointer/events* function `setTouchAction(targetElement, actionType)`
+- Declarative: add the attribute `data-touch-action='<actiontype>'`
+
+Where actionType is `none`to disable the user agent default behavior. `pan-x` and `pan-y` have the same effect as `none` (see Limitations)
+
 ###Samples/tests
-To run the tests/samples you need to set [requirejs] and [domReady] as a sibbling of the pointer events module like this:
+To run the tests/samples you need to set [requirejs] and [domReady] as a sibling of the pointer events module like this:
 
 	<root>/pointer/events/events.js
 	<root>/requirejs/require.js
@@ -53,6 +59,8 @@ To run the tests/samples you need to set [requirejs] and [domReady] as a sibblin
 - `event.button` returns `0` instead of `-1` on mouse move when no buttons are pressed.
 	- Pointer Events specification defines a new set of values for `event.button` and `event.buttons`: Mouse move with no buttons pressed should generate `event.button=-1`. It is not possible to force `-1` on `event.button` on browsers because they use unsigned int as internal representation of `event.button`. Setting -1 gives inconsistent results (some browsers return 0, other 65535...).
 - Pen properties (pressure/tiltx,y/height/width...) are not implemented. Properties are defined with default values. The API has not been tested with pens.
+- Avoid to rely on `pointerType`. In some cases (for instance, when a mouse is plugged on Android devices), the type may not be accurate (the mouse generates touch events and there is no way to know that they originate from a mouse.).
+
 
 ## Status
 - No official release, **work in progress**.

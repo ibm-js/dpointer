@@ -1,5 +1,6 @@
-#Pointer/Events [![Build Status](https://travis-ci.org/ibm-dojo/dtreemap.png?branch=master)](https://travis-ci.org/ibm-dojo/pointer)
-This [repository][SPE_pointer] proposes a unified and consistent javascript events API which aims to abstract touch/pointer/mouse events across various devices/OS. 
+#dpointer [![Build Status](https://travis-ci.org/ibm-dojo/dpointer.png?branch=master)](https://travis-ci.org/ibm-dojo/dpointer])
+
+This project proposes a unified and consistent javascript events API which aims to abstract touch/pointer/mouse events across various devices/OS. 
 
 This API is a shim of the [W3C Pointer Events specification][W3C_pointer] and adds features that are out of scope of the current specification.
 
@@ -8,7 +9,7 @@ This API is a shim of the [W3C Pointer Events specification][W3C_pointer] and ad
 - Support **Pointer Capture** with mouse and touch events.
 - Normalize **click** (Tap) events, **double click** (double Tap) events, and event **button/buttons/which** values.
 
-##Supported environements
+##Supported environments
 The API has been successfully tested on the following environments.
 ###Mobile
 
@@ -67,7 +68,7 @@ To run the tests/samples you need to set [requirejs] and [domReady] as a sibling
 
 ## Contributing
 - Use, tests and contributions are welcome: see [contributing]
-- This API was developped with **Dojo 2.0** in mind, as a possible replacement of the current Dojo touch API. For more details see [ticket #17192][T_17192]
+- This API was developed with **Dojo 2.0** in mind, as a possible replacement of the current Dojo touch API. For more details see [ticket #17192][T_17192]
 
 ## Licensing
 This project is distributed by the Dojo Foundation and licensed under the "New" [BSD License]. All contributions require a [Dojo Foundation CLA].
@@ -75,7 +76,6 @@ This project is distributed by the Dojo Foundation and licensed under the "New" 
 ## Credits
 * Sebastien Pereira (IBM CCLA)
 
-[SPE_pointer]: https://github.com/seb-pereira/pointer
 [W3C_pointer]: http://www.w3.org/TR/pointerevents
 [T_17192]: https://bugs.dojotoolkit.org/ticket/17192
 [contributing]: CONTRIBUTING.md

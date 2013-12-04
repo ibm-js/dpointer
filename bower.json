@@ -1,0 +1,9 @@
+{
+	"name": "dpointer",
+	"version": "0.1.0-dev",
+	"ignore": [
+		"tests",
+		".jshintrc",
+		".travis.yml"
+	]
+}

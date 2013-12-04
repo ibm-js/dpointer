@@ -79,7 +79,7 @@ This project is distributed by the Dojo Foundation and licensed under the "New" 
 [W3C_pointer]: http://www.w3.org/TR/pointerevents
 [T_17192]: https://bugs.dojotoolkit.org/ticket/17192
 [contributing]: CONTRIBUTING.md
-[BSD License]: https://github.com/dojo/dojo/blob/master/LICENSE#L13-L41
+[BSD License]: ./LICENSE
 [Dojo Foundation CLA]: http://dojofoundation.org/about/claForm
 [requirejs]: https://github.com/jrburke/requirejs
 [domReady]: https://github.com/requirejs/domReady

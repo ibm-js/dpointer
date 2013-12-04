@@ -36,22 +36,22 @@ The API has been successfully tested on the following environments.
 This project can be integrated into any AMD capable javascript application. 
 
 ##Usage
-1. Require the module `pointer/events`
+1. Require the module `dpointer/events`
 2. Set the attribute `data-touch-action` as appropriate
 2. Start listening to Pointer Events: 
 `pointerdown, pointerup, pointercancel, pointermove,`
 `pointerover, pointerout, pointerenter, pointerleave, gotpointercapture and lostpointercapture`.
 
 ###Setting the Touch Action attribute
-- Programmatic: use *pointer/events* function `setTouchAction(targetElement, actionType)`
+- Programmatic: use *dpointer/events* function `setTouchAction(targetElement, actionType)`
 - Declarative: add the attribute `data-touch-action='<actiontype>'`
 
 Where actionType is `none`to disable the user agent default behavior. `pan-x` and `pan-y` have the same effect as `none` (see Limitations)
 
 ###Samples/tests
-To run the tests/samples you need to set [requirejs] and [domReady] as a sibling of the pointer events module like this:
+To run the tests/samples you need to set [requirejs] and [domReady] as a sibling of the dpointer module like this:
 
-	<root>/pointer/events/events.js
+	<root>/dpointer/events/events.js
 	<root>/requirejs/require.js
 	<root>/domReady/domReady.js
 

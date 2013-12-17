@@ -37,8 +37,8 @@ This project can be integrated into any AMD capable javascript application.
 
 ##Usage
 1. Require the module `dpointer/events`
-2. Set the attribute `data-touch-action` as appropriate
-2. Start listening to Pointer Events: 
+2. Set the attribute `data-touch-action` on elements you want to handle pointer events. Example: `<div data-touch-action="none"> </div>`
+3. Start listening to Pointer Events: 
 `pointerdown, pointerup, pointercancel, pointermove,`
 `pointerover, pointerout, pointerenter, pointerleave, gotpointercapture and lostpointercapture`.
 

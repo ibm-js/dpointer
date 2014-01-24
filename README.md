@@ -1,4 +1,4 @@
-#dpointer [![Build Status](https://travis-ci.org/ibm-dojo/dpointer.png?branch=master)](https://travis-ci.org/ibm-dojo/dpointer)
+#dpointer [![Build Status](https://travis-ci.org/ibm-js/dpointer.png?branch=master)](https://travis-ci.org/ibm-js/dpointer)
 
 This project proposes a unified and consistent javascript events API which aims to abstract touch/pointer/mouse events across various devices/OS. 
 

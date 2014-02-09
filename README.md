@@ -8,6 +8,7 @@ This API is a shim of the [W3C Pointer Events specification][W3C_pointer] and ad
 - Use attribute `data-touch-action` to set touch action on HTML elements; generates `touch-action` and `ms-touch-action` CSS properties when supported by the browser.
 - Support **Pointer Capture** with mouse and touch events.
 - Normalize **click** (Tap) events, **double click** (double Tap) events, and event **button/buttons/which** values.
+- Generate immediate clicks (no ~300ms delay)
 
 ##Supported environments
 The API has been successfully tested on the following environments.

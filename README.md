@@ -34,7 +34,17 @@ The API has been successfully tested on the following environments.
 - FireFox 24 (multi touch expected starting release 26)
 
 ## Dependencies
-This project can be integrated into any AMD capable javascript application. 
+This project can be integrated into any AMD capable javascript application.
+
+## Installation
+
+_Bower_ release installation:
+
+    $ bower install dpointer
+
+_Manual_ master installation:
+
+    $ git clone git://github.com/ibm-js/dpointer.git
 
 ##Usage
 1. Require the module `dpointer/events`

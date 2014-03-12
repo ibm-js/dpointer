@@ -94,7 +94,7 @@ define([
 		if (isScrolling) {
 			isScrolling = false;
 		} else {
-			utils.dispatchEvent(e.target, createPointer(utils.events.UP, e, {}));
+			utils.dispatchEvent(MouseTracker.identifyTarget(e.target), createPointer(utils.events.UP, e, {}));
 			MouseTracker.implicitReleaseCapture();
 			MouseTracker.update(e);
 		}

@@ -68,7 +68,7 @@ define([
 	};
 
 	/**
-	 * Set the attribute data-touch-action on the target element.
+	 * Set the attribute touch-action on the target element.
 	 * Supported touch-actions are "auto" (user agent handles touch actions
 	 * default behaviors), "none" (disable user agent default behavior), pan-x and pan-y.
 	 *
@@ -132,7 +132,7 @@ define([
 	};
 
 	/**
-	 * CSS rule to define touch-action or -ms-touch-action when data-touch-action attribute is set on Elements.
+	 * CSS rule to define touch-action or -ms-touch-action when touch-action attribute is set on Elements.
 	 *
 	 * @param styleName should be touch-action or -ms-touch-action
 	 */

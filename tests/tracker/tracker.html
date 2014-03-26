@@ -61,10 +61,10 @@ Display log has 40 entry max.
 						var elementRef = document.getElementById(item[1]);
 						checkboxRef.addEventListener("change", function(){
 							if(checkboxRef.checked){
-								tracker.log("set data-touch-action = none [" + item[1] + "]");
+								tracker.log("set touch-action = none [" + item[1] + "]");
 								pointer.setTouchAction(elementRef, "none");
 							}else{
-								tracker.log("set data-touch-action = auto [" + item[1] + "]");
+								tracker.log("set touch-action = auto [" + item[1] + "]");
 								pointer.setTouchAction(elementRef, "auto");
 							}
 						});

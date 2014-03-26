@@ -5,7 +5,7 @@ This project proposes a unified and consistent javascript events API which aims 
 This API is a shim of the [W3C Pointer Events specification][W3C_pointer] and adds features that are out of scope of the current specification.
 
 - Generates **Pointer Events** according to the current specification..
-- Use attribute `data-touch-action` to set touch action on HTML elements; generates `touch-action` and `ms-touch-action` CSS properties when supported by the browser.
+- Use attribute `touch-action` to set touch action on HTML elements; generates `touch-action` and `ms-touch-action` CSS properties when supported by the browser.
 - Support **Pointer Capture** with mouse and touch events.
 - Normalize **click** (Tap) events, **double click** (double Tap) events, and event **button/buttons/which** values.
 - Generate immediate clicks (no ~300ms delay)
@@ -48,14 +48,14 @@ _Manual_ master installation:
 
 ##Usage
 1. Require the module `dpointer/events`
-2. Set the attribute `data-touch-action` on elements you want to handle pointer events. Example: `<div data-touch-action="none"> </div>`
+2. Set the attribute `touch-action` on elements you want to handle pointer events. Example: `<div touch-action="none"> </div>`
 3. Start listening to Pointer Events: 
 `pointerdown, pointerup, pointercancel, pointermove,`
 `pointerover, pointerout, pointerenter, pointerleave, gotpointercapture and lostpointercapture`.
 
 ###Setting the Touch Action attribute
 - Programmatic: use *dpointer/events* function `setTouchAction(targetElement, actionType)`
-- Declarative: add the attribute `data-touch-action='<actiontype>'`
+- Declarative: add the attribute `touch-action='<actiontype>'`
 
 Where actionType is `none`to disable the user agent default behavior. `pan-x` and `pan-y` have the same effect as `none` (see Limitations)
 

@@ -20,7 +20,7 @@ define([
 			LOSTCAPTURE: "lostpointercapture"
 		},
 		TouchAction: { // touch action
-			ATTR_NAME: "data-touch-action",
+			ATTR_NAME: "touch-action",
 			AUTO: 0,  // 0000
 			PAN_X: 1, // 0001
 			PAN_Y: 2, // 0010
@@ -38,7 +38,7 @@ define([
 
 	/**
 	 * With touch events there is no CSS property touch-action: Touch action
-	 * is specified by the value of the HTML attribute data-touch-action.
+	 * is specified by the value of the HTML attribute touch-action.
 	 * This function returns the touch action which applies to the element, based on "touch action"
 	 * from its ancestors.
 	 * To be used only when underlying native events are touch events.

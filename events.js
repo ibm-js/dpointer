@@ -161,8 +161,5 @@ define([
 	// start listening to native events
 	pointerEvents.enable();
 
-	// expose event names
-	pointerEvents.events = utils.events;
-
 	return pointerEvents;
 });

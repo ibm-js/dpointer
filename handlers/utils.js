@@ -85,7 +85,7 @@ define([
 		var e = createMouseEvent(pointerType, props);
 		fixButtonsProperties(e, props.buttons);
 		setPointerProperties(e, props);
-		mapNativeFunctions(e);
+		mapNativeFunctions(e, nativeEvent);
 		return e;
 	};
 
@@ -332,6 +332,9 @@ define([
 	 * @param nativeEvent underlying event which contributes to this pointer event.
 	 */
 	function mapNativeFunctions(e, nativeEvent) {
+		if (e.type === utils.GOTCAPTURE || e.type === utils.LOSTCAPTURE) {
+			return; //no default action on pointercapture events
+		}
 		var _stopPropagation = e.stopPropagation,
 			_preventDefault = e.preventDefault;
 		e.stopPropagation = function () {

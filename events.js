@@ -21,6 +21,11 @@ define([
 		};
 
 	/**
+	 * @protected
+	 */
+	pointerEvents.touchTracker = touch.touchTracker,
+
+	/**
 	 * Enable Pointer events. Register native event handlers. Importing this module automatically register native
 	 * event handlers on window.document, unless you specify a target element.
 	 *

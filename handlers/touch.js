@@ -391,6 +391,12 @@ define([
 	};
 
 	return {
+		
+		/**
+		 * @protected
+		 */
+		touchTracker: TouchTracker,
+
 		/**
 		 * register touch events handlers.
 		 *
@@ -435,5 +441,6 @@ define([
 		releasePointerCapture: function (targetElement, pointerId) {
 			return TouchTracker.releaseCapture(pointerId - 2, targetElement, false);
 		}
+
 	};
 });

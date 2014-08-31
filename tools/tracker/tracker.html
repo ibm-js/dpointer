@@ -9,13 +9,14 @@ Display log has 40 entry max.
 -->
 <html>
 <head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 	<meta http-equiv="cache-control" content="no-cache">
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<title>Pointer: Events Tracker</title>
 
-	<link rel="stylesheet" type="text/css" href="./tracker.css">
+	<link rel="stylesheet" type="text/css" href="tracker.css">
 
 	<script src="./tracker.js"></script>
 	<script>var require = {baseUrl: "../../.."}</script>
@@ -23,14 +24,14 @@ Display log has 40 entry max.
 	<script type="text/javascript">
 		requirejs([
 			"dpointer/events",
-			"domReady/domReady!"
-		], function(pointer){
+			"requirejs-domready/domReady!"
+		], function (pointer) {
 			var tracker = new EventTracker(document.getElementById("eventtable"), document.getElementById("base1"));
 
-			document.getElementById("clearLogTable").addEventListener("click", function(){
+			document.getElementById("clearLogTable").addEventListener("click", function () {
 				tracker.clearLogTable();
 			});
-			document.getElementById("infos").addEventListener("click", function(){
+			document.getElementById("infos").addEventListener("click", function () {
 				tracker.displayInfo();
 			});
 
@@ -38,11 +39,11 @@ Display log has 40 entry max.
 			var targetElement = document.getElementById('base1');
 			var checkboxRef = document.getElementById("enableCustomEvents");
 			checkboxRef.checked = true;
-			checkboxRef.addEventListener("change", function(){
-				if(checkboxRef.checked){
+			checkboxRef.addEventListener("change", function () {
+				if (checkboxRef.checked) {
 					tracker.log("enable Pointer Events shim");
 					pointer.enable(targetElement);
-				}else{
+				} else {
 					tracker.log("disable Pointer Events shim");
 					pointer.disable(targetElement);
 				}
@@ -55,15 +56,15 @@ Display log has 40 entry max.
 				["touchAction02", "middleBlock"] ,
 				["touchAction03", "rightBlock"]
 			].forEach(
-					function(item){
+					function (item) {
 						var checkboxRef = document.getElementById(item[0]);
 						checkboxRef.checked = false;
 						var elementRef = document.getElementById(item[1]);
-						checkboxRef.addEventListener("change", function(){
-							if(checkboxRef.checked){
+						checkboxRef.addEventListener("change", function () {
+							if (checkboxRef.checked) {
 								tracker.log("set touch-action = none [" + item[1] + "]");
 								pointer.setTouchAction(elementRef, "none");
-							}else{
+							} else {
 								tracker.log("set touch-action = auto [" + item[1] + "]");
 								pointer.setTouchAction(elementRef, "auto");
 							}
@@ -71,58 +72,58 @@ Display log has 40 entry max.
 					});
 
 			// checkbox handlers to enable/disable event display
-			(function(){ // pointer events
+			(function () { // pointer events
 				var checkboxRef = document.getElementById("customEvents");
 				checkboxRef.checked = EventTracker.displayPointerEvents;
-				checkboxRef.addEventListener("change", function(){
+				checkboxRef.addEventListener("change", function () {
 					EventTracker.displayPointerEvents = (checkboxRef.checked);
 					tracker.log("display Pointer Events: " + EventTracker.displayPointerEvents);
 				});
 			})();
-			(function(){ // MSPointer events
-				if(window.navigator.msPointerEnabled){
+			(function () { // MSPointer events
+				if (window.navigator.msPointerEnabled) {
 					var checkboxRef = document.getElementById("msEvents");
 					checkboxRef.checked = EventTracker.displayMSPointerEvents;
-					checkboxRef.addEventListener("change", function(){
+					checkboxRef.addEventListener("change", function () {
 						EventTracker.displayMSPointerEvents = (checkboxRef.checked);
 						tracker.log("display MS Pointer Events: " + EventTracker.displayMSPointerEvents);
 					});
-				}else{
+				} else {
 					document.getElementById("msEventsLabel").style.display = "none";
 				}
 			})();
-			(function(){ // Mouse events
+			(function () { // Mouse events
 				var checkboxRef = document.getElementById("mouseEvents");
 				checkboxRef.checked = EventTracker.displayMouseEvents;
-				checkboxRef.addEventListener("change", function(){
+				checkboxRef.addEventListener("change", function () {
 					EventTracker.displayMouseEvents = (checkboxRef.checked);
 					tracker.log("display mouse events: " + EventTracker.displayMouseEvents);
 				});
 			})();
-			(function(){ // Touch events
-				if("ontouchstart" in document){
+			(function () { // Touch events
+				if ("ontouchstart" in document) {
 					var checkboxRef = document.getElementById("touchEvents");
 					checkboxRef.checked = EventTracker.displayTouchEvents;
-					checkboxRef.addEventListener("change", function(){
+					checkboxRef.addEventListener("change", function () {
 						EventTracker.displayTouchEvents = (checkboxRef.checked);
 						tracker.log("display touch events: " + EventTracker.displayTouchEvents);
 					});
-				}else{
+				} else {
 					document.getElementById("touchEventsLabel").style.display = "none";
 				}
 			})();
 
 			// allow to set CSS overflow on tracker elements
-			(function(){
+			(function () {
 				[
 					["overflow01", "leftBlock"],
 					["overflow02", "middleBlock"] ,
 					["overflow03", "rightBlock"]
 				].forEach(
-						function(item){
+						function (item) {
 							var checkboxRef = document.getElementById(item[0]);
 							checkboxRef.checked = false;
-							checkboxRef.addEventListener("change", function(){
+							checkboxRef.addEventListener("change", function () {
 								tracker.overflowOnElement(item[1], (checkboxRef.checked));
 							});
 						}
@@ -130,28 +131,28 @@ Display log has 40 entry max.
 			})();
 
 			// allow to set prevent default on touch start/move on tracker elements
-			(function(){
-				if("ontouchstart" in document){
+			(function () {
+				if ("ontouchstart" in document) {
 					[
 						["preventDefault01", "leftBlock"],
 						["preventDefault02", "middleBlock"] ,
 						["preventDefault03", "rightBlock"]
 					].forEach(
-							function(item){
+							function (item) {
 								var checkboxRef = document.getElementById(item[0]);
 								checkboxRef.checked = false;
-								checkboxRef.addEventListener("change", function(){
+								checkboxRef.addEventListener("change", function () {
 									tracker.log("prevent default (touchstart/touchmove) on elt [" + item[1] + "] = " + (checkboxRef.checked));
 									tracker.preventDefaultOnElement(item[1], (checkboxRef.checked));
 								});
 							});
-				}else{
+				} else {
 					document.getElementById("preventDefault").style.display = "none";
 				}
 			})();
 
 			// fill right panel to test overflow scroll
-			(function(){
+			(function () {
 				var elementRef = document.getElementById('rightBlock');
 				elementRef.innerHTML = elementRef.innerHTML + "<ul>";
 				for (var i = 0; i <= 300; i++) {
@@ -162,21 +163,21 @@ Display log has 40 entry max.
 			})();
 
 			// set Pointer capture on element captureBtn
-			(function(){
+			(function () {
 				var elementRef = document.getElementById('captureBtn');
-				elementRef.addEventListener("pointerdown", function(e){
+				elementRef.addEventListener("pointerdown", function (e) {
 					pointer.setPointerCapture(e.target, e.pointerId);
 				});
 			})();
 
 			// manage log scroll
-			function resizeLogTable(){
+			function resizeLogTable() {
 				document.getElementById("logscroll").style.height =
 						(document.getElementById("eventlog").offsetHeight -
 								document.getElementById("ctrlBar").offsetHeight) + "px";
 			}
 
-			window.addEventListener("resize", function(){
+			window.addEventListener("resize", function () {
 				resizeLogTable();
 			});
 
@@ -185,6 +186,16 @@ Display log has 40 entry max.
 			window.document.body.style.visibility = "visible";
 
 			tracker.displayInfo();
+
+			// disable text selection
+			document.getElementById("logscroll").addEventListener("selectstart", function (e) {
+				e.preventDefault();
+			}, false);
+
+			// clear log on double click
+			document.getElementById("logscroll").addEventListener("dblclick", function (event) {
+				tracker.clearLogTable();
+			}, false);
 		});
 	</script>
 </head>
@@ -222,7 +233,7 @@ Display log has 40 entry max.
 			</div>
 		</div>
 	</div>
-	<div id="logscroll">
+	<div id="logscroll" touch-action="pan-x pan-y">
 		<table id="eventtable">
 			<tbody>
 			</tbody>
@@ -241,7 +252,7 @@ Display log has 40 entry max.
 <script>
 	"use strict";
 	// display text on canvas
-	(function(){
+	(function () {
 		var canvas = document.getElementById('leftBlock');
 		canvas.height = window.innerHeight;
 		canvas.width = window.innerWidth;

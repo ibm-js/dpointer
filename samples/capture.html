@@ -8,6 +8,7 @@
 	<meta name="viewport"
 		  content="width=device-width, initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
 	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 	<title>Pointer Events: capture > capture1</title>
 
 	<style>
@@ -23,24 +24,15 @@
 		}
 
 		#container {
-			height: 200px;
-			width: 200px;
+			height: auto;
+			width: auto;
 			background-color: #AAAAAA;
-			margin: 0;
+			padding: 10px;
 			top: 0;
 			left: 0;
-			position: absolute;
-			-webkit-touch-callout: none;
-			-webkit-user-select: none;
-			-khtml-user-select: none;
-			-moz-user-select: none;
-			-ms-user-select: none;
-			user-select: none;
 		}
 
 		.btn {
-			top: 30px;
-			left: 5px;
 			width: 150px;
 			height: 35px;
 			color: #000000;
@@ -53,6 +45,11 @@
 			border-color: #000000;
 			border-radius: 10%;
 			cursor: pointer;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
 		}
 
 		.btn:active {
@@ -62,11 +59,9 @@
 		}
 
 		#msgArea {
-			color: white;
 			background-color: orange;
 			position: relative;
 			margin: 0;
-			top: 200px;
 			left: 0;
 			padding: 0;
 			color: #000000;
@@ -75,12 +70,12 @@
 		}
 	</style>
 
-	<script>var require = {baseUrl: "../../.."}</script>
-	<script type="text/javascript" src="../../../requirejs/require.js"></script>
+	<script>var require = {baseUrl: "../.."}</script>
+	<script type="text/javascript" src="../../requirejs/require.js"></script>
 	<script type="text/javascript">
 		requirejs([
 			"dpointer/events",
-			"domReady/domReady!"
+			"requirejs-domready/domReady!"
 		], function(pointer){
 			var msgArea = document.getElementById("msgArea");
 
@@ -107,6 +102,15 @@
 				logit(event.target.id + ":pointermove (" + event.clientX + "/" + event.clientY + ")");
 			});
 
+			// disable text selection
+			msgArea.addEventListener("selectstart", function (e) {
+				e.preventDefault();
+			}, false);
+
+			// clear log on double click
+			msgArea.addEventListener("dblclick", function(event){
+				msgArea.innerHTML = "";
+			});
 
 			function logit(msg){
 				msgArea.innerHTML = msg + "</br>" + msgArea.innerHTML;
@@ -121,6 +125,6 @@
 	&#160;
 	<div id="capturedBtn" class="btn">CAPTURE</div>
 </div>
-<div id="msgArea">== LOG ==</div>
+<div id="msgArea" touch-action="pan-x pan-y">== LOG ==</div>
 </body>
 </html>

@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <!--
-	. This sample relies on
-	pointer capture rather than pointermove and event.button value.
+	Simple paint application to demonstrate multi touch handling with Pointer Events, using dpointer API.
+	This sample relies on pointer capture rather than pointermove and event.button value.
 
-	Sample paint application to demonstrate multi touch handling. This sample illustrate a possible usage of
-	pointer capture. IE9 doesn't reflect pressed button state on mousemove events. Pointer capture allow to get over
-	this limitation.
+	This sample illustrate a possible usage of pointer capture. IE9 doesn't reflect pressed button state on
+	mousemove events. Pointer capture allow to get over	this limitation.
 
-	Simply change the device orientation to reset the canvas.
-	Number of active touch point depends on hardware capabilities and system option.
+	The number of active touch point depends on hardware capabilities and system option.
 	To use more than 3 touch points on iOS, disable Mutitasking Gestures in Settings > General.
+	Double Tab/click to clear the canvas.
 
 	 Tested on:
 	 - Android 4.1.1: stockbrowser + Chrome
@@ -49,12 +48,12 @@
 		}
 	</style>
 
-	<script>var require = {baseUrl: "../../.."}</script>
-	<script type="text/javascript" src="../../../requirejs/require.js"></script>
+	<script>var require = {baseUrl: "../.."}</script>
+	<script type="text/javascript" src="../../requirejs/require.js"></script>
 	<script type="text/javascript">
 		requirejs([
 			"dpointer/events",
-			"domReady/domReady!"
+			"requirejs-domready/domReady!"
 		], function(pointer){
 			var canvas = document.getElementById("drawingArea");
 			var context = canvas.getContext("2d");
@@ -88,8 +87,8 @@
 					context.fillRect(event.clientX, event.clientY, 5, 5);
 				}
 			});
-			// reset canvas on orientation change
-			window.addEventListener("resize", function(){
+			// reset canvas on double tap/click
+			canvas.addEventListener("dblclick", function(){
 				canvas.height = window.innerHeight;
 				canvas.width = window.innerWidth;
 			});

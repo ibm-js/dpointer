@@ -31,7 +31,9 @@ define([
 
 	// Check if MouseEvent constructor is supported.
 	try {
-		new MouseEvent("mousedown", {}); // jshint ignore:line
+		//jshint nonew: false
+		new MouseEvent("mousedown", {});
+		//jshint nonew: true
 		utils.SUPPORT_MOUSE_EVENT_CONSTRUCTOR = true;
 	} catch (e) {
 	}
@@ -253,6 +255,7 @@ define([
 	 * @param props event properties
 	 * @returns MouseEvent
 	 */
+	/*jshint maxcomplexity: 15*/
 	function createMouseEvent(pointerType, props) {
 		// Mouse Event spec
 		// http://www.w3.org/TR/2001/WD-DOM-Level-3-Events-20010823/events.html#Events-eventgroupings-mouseevents
@@ -261,7 +264,7 @@ define([
 			return new MouseEvent(pointerType, props);
 		}
 		var e = document.createEvent("MouseEvents");
-		/* jshint ignore:start */
+
 		e.initMouseEvent(
 			pointerType,
 			(props.bubbles),
@@ -279,7 +282,6 @@ define([
 			(props.button) || 0,
 			(props.relatedTarget) ||
 				null);
-		/* jshint ignore:end */
 		return e;
 	}
 

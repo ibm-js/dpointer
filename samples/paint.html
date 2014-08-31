@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <!--
-	Sample paint application to demonstrate multi touch handling with pointer events.
-	Simply change the device orientation to reset the canvas.
-	Number of active touch point depends on hardware capabilities and system option.
+	Simple paint application to demonstrate multi touch handling with Pointer Events, using dpointer API.
+	The number of active touch point depends on hardware capabilities and system option.
 	To use more than 3 touch points on iOS, disable Mutitasking Gestures in Settings > General.
+	Double Tab/click to clear the canvas.
 
 	 Tested on:
 	 - Android 4.1.1: stockbrowser + Chrome
@@ -43,12 +43,12 @@
 		}
 	</style>
 
-	<script>var require = {baseUrl: "../../.."}</script>
-	<script type="text/javascript" src="../../../requirejs/require.js"></script>
+	<script>var require = {baseUrl: "../.."}</script>
+	<script type="text/javascript" src="../../requirejs/require.js"></script>
 	<script type="text/javascript">
 		requirejs([
 			"dpointer/events",
-			"domReady/domReady!"
+			"requirejs-domready/domReady!"
 		], function(pointer){
 			try {
 				var canvas = document.getElementById("drawingArea");
@@ -64,8 +64,8 @@
 					}
 				});
 
-				// reset canvas on orientation change
-				window.addEventListener("resize", function(){
+				// reset canvas on double tap/click
+				canvas.addEventListener("dblclick", function(){
 					canvas.height = window.innerHeight;
 					canvas.width = window.innerWidth;
 				});

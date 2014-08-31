@@ -1,4 +1,14 @@
 language: node_js
-node_js: "0.10"
-install: "npm -g install jshint@2.4.x"
-script: "jshint ."
+node_js:
+- '0.10'
+install:
+- npm install -g grunt-cli
+- npm -g install bower
+- npm install
+- bower install
+script:
+- grunt jshint test:remote
+env:
+  global:
+  - secure: eY1OxvXmDHrxYoO5hQwcWNptaJClL69aswUw5G+ZNppSEymNCTquYN/MS87iZm76G98o4A0aafM989d5UDhjU187NYdxf6K7jEPwtaxuHi6d48M0LRG/DoAWCNOUoNyNuhpRCVEB7XmwvZOG9nmoRcPvt+KjM5VkiOvp+CluCk0=
+  - secure: F0RyTrC3kdKomLNbKXJJA1Ju0ZCnB5E7oW7eYwkikLjlfn/4rBkuX4MYJqGBdCIwotpx0k30Wmql7cpYsk9pfM36NIqZoY3bOMITAY/FR8gxiE6zLjFEV/JBdY1hKIeDStsCEPJIRPd27oq4yK1j8dVFel9rI+aENWV1+CZ7o7o=

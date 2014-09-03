@@ -1,4 +1,5 @@
 // dpointer unit tests
 define([
-	"./tests-infra"
+	//"./tests-infra"
+	"./dpointer-utils"
 ]);

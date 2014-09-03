@@ -112,7 +112,7 @@ define([
 						createPointer(utils.events.OUT, e, touch, {relatedTarget: touchTarget}));
 					// generate pointerleave event(s)
 					utils.dispatchLeaveEvents(lastElementFromPoint, touchTarget,
-						createPointer(utils.events.LEAVE, e, touch, {relatedTarget: touchTarget, bubbles: false}));
+						createPointer(utils.events.LEAVE, e, touch, {relatedTarget: touchTarget}));
 					// generate pointermove
 					utils.dispatchEvent(touchTarget, createPointer(utils.events.MOVE, e, touch, {}));
 					// generate pointerover
@@ -121,7 +121,7 @@ define([
 					// generate pointerenter event(s)
 					utils.dispatchEnterEvents(touchTarget, lastElementFromPoint,
 						createPointer(utils.events.ENTER, e, touch,
-							{relatedTarget: lastElementFromPoint, bubbles: false}));
+							{relatedTarget: lastElementFromPoint}));
 				} else {
 					utils.dispatchEvent(touchTarget, createPointer(utils.events.MOVE, e, touch, {}));
 				}
@@ -233,16 +233,16 @@ define([
 		props.altKey = touchEvent.altKey;
 		props.shiftKey = touchEvent.shiftKey;
 		props.metaKey = touchEvent.metaKey;
+		props.pageX = touch.pageX;
+		props.pageY = touch.pageY;
 		if (TouchTracker.hasCapture(touch.identifier)) {  // W3C spec §10.1
 			props.relatedTarget = null;
 		}
 		// normalize button/buttons values
 		// http://www.w3.org/TR/pointerevents/#chorded-button-interactions
-		// for pointer: button=0, buttons=1, which=1 for all events but PointerMove: button=-1,buttons=0,which=0
-		// as it is not possible to assign negative value to button(s), just use 0.
-		props.button = 0;
+		props.button = (pointerType === utils.events.MOVE) ? -1 : 0;
 		props.buttons = 1;
-		props.which = 1;
+		props.which = props.button + 1;
 		// Pointer Events properties
 		props.pointerId = touch.identifier + 2; // avoid id collision: 1 is reserved for mouse events mapping
 		props.pointerType = "touch";
@@ -282,18 +282,17 @@ define([
 	 * @return HTMLElement the DOM element.
 	 */
 	function elementFromTouch(touch) {
-		//todo: investigate #15821 (different behaviors?)
-		return touch.target.ownerDocument.elementFromPoint(touch.pageX, touch.pageY);
+		return touch.target.ownerDocument.elementFromPoint(touch.clientX, touch.clientY);
 	}
 
 	// todo:refactor + document TouchTracker/TouchInfo
-/*	function TouchInfo(touchId, touchAction) {
-		this.touchId = touchId;
-		this.touchAction = 0;
-		this.lastNativeEvent = null;
-		this.lastTargetElement = null;
-		this.captureTarget = null;
-	}*/
+	/*	function TouchInfo(touchId, touchAction) {
+	 this.touchId = touchId;
+	 this.touchAction = 0;
+	 this.lastNativeEvent = null;
+	 this.lastTargetElement = null;
+	 this.captureTarget = null;
+	 }*/
 	var TouchTracker = {
 		// touchId of the primary pointer, or -1 if no primary pointer set.
 		primaryTouchId: -1,

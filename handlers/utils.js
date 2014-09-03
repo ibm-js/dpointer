@@ -25,18 +25,68 @@ define([
 			PAN_X: 1, // 0001
 			PAN_Y: 2, // 0010
 			NONE: 3   // 0011
-		},
-		SUPPORT_MOUSE_EVENT_CONSTRUCTOR: false
+		}
 	};
 
-	// Check if MouseEvent constructor is supported.
-	try {
-		//jshint nonew: false
-		new MouseEvent("mousedown", {});
-		//jshint nonew: true
-		utils.SUPPORT_MOUSE_EVENT_CONSTRUCTOR = true;
-	} catch (e) {
-	}
+	// Properties and their default value used to create synthetic "Pointer Events" 
+	var eventPropDesc = {
+		// MouseEvent interface properties
+		screenX: 0,
+		screenY: 0,
+		clientX: 0,
+		clientY: 0,
+		ctrlKey: null,
+		shiftKey: null,
+		altKey: null,
+		metaKey: null,
+		button: 0,
+		relatedTarget: null,
+		// MouseEvent non standard properties
+		which: 0,
+		pageX: 0,
+		pageY: 0,
+		buttons: 0,
+		// PointerEvent interface properties
+		pointerId: 0,
+		width: 0,
+		height: 0,
+		pressure: 0,
+		tiltX: 0,
+		tiltY: 0,
+		pointerType: "",
+		isPrimary: false
+	};
+
+	// Pointer Events properties depending on the event type
+	var eventTypeDesc = {
+		pointerover: {bubbles: true, cancelable: true},
+		pointerenter: {bubbles: false, cancelable: false},
+		pointerdown: {bubbles: true, cancelable: true},
+		pointermove: {bubbles: true, cancelable: true},
+		pointerup: {bubbles: true, cancelable: true},
+		pointercancel: {bubbles: true, cancelable: false},
+		pointerout: {bubbles: true, cancelable: true},
+		pointerleave: {bubbles: false, cancelable: false},
+		gotpointercapture: {bubbles: true, cancelable: false},
+		lostpointercapture: {bubbles: true, cancelable: false}
+	};
+
+	// Check if all properties can be redefined using a UIEvent.
+	// Synthetic Pointer Event are created from a UIEvent.
+	// "MouseEvent" would be too restrictive when it comes to redefine properties. 
+	// "Event" may be better for performance and lest restrictive to redefine properties, but it causes weird/unstable
+	// behavior on some Samsung/Android 4.2.2 browsers (fast moving of a Slider cause event.target to be null at
+	// some point...)
+	var canRedefineUIEvent = (function () {
+		try {
+			defineEventProperties(document.createEvent("UIEvent"), {});
+			return true;
+		} catch (error) {
+			eventPropDesc.view = null;
+			eventPropDesc.detail = 0;
+			return false;
+		}
+	})();
 
 	/**
 	 * With touch events there is no CSS property touch-action: Touch action
@@ -76,20 +126,60 @@ define([
 	 *
 	 * @param pointerType pointer event type name ("pointerdown", "pointerup"...)
 	 * @param nativeEvent underlying event which contributes to this pointer event.
-	 * @param props event properties (optional)
-	 * @returns MouseEvent a  Pointer event
+	 * @param props event properties (optional). Note that "bubbles", "cancelable", "view" and "detail" are ignored. 
+	 * @returns Event a  Pointer event
 	 */
 	utils.Pointer = function (pointerType, nativeEvent, props) {
-		props = props || {};
-		props.bubbles = ("bubbles" in props) ? props.bubbles : true;
-		props.cancelable = (props.cancelable) || true;
+		var event;
+		// set bubbles and cancelable value according to pointer event type
+		props.bubbles = eventTypeDesc[pointerType].bubbles;
+		props.cancelable = eventTypeDesc[pointerType].cancelable;
+		// create the base event
+		if (canRedefineUIEvent) {
+			event = document.createEvent("UIEvent");
+			event.initUIEvent(
+				pointerType, props.bubbles, props.cancelable, nativeEvent.view || null, nativeEvent.detail || 0
+			);
+		} else {
+			// fallback (iOS 7 disallows to redefine property value/getter)
+			event = document.createEvent("Event");
+			event.initEvent(pointerType, props.bubbles, props.cancelable);
+			// view and detail properties are not available in Event constructor 
+			props.view = nativeEvent.view || null;
+			props.detail = nativeEvent.detail || 0;
+		}
+		// redefine event properties
+		defineEventProperties(event, props);
+		// map functions
+		mapNativeFunctions(event, nativeEvent);
 
-		var e = createMouseEvent(pointerType, props);
-		fixButtonsProperties(e, props.buttons);
-		setPointerProperties(e, props);
-		mapNativeFunctions(e, nativeEvent);
-		return e;
+		return event;
 	};
+
+	/**
+	 * @param e event
+	 * @param props event properties
+	 * @returns Event
+	 */
+	function defineEventProperties(e, props) {
+		props.pressure = props.pressure || (props.buttons ? 0.5 : 0);
+		var propsDesc = {};
+		Object.keys(eventPropDesc).forEach(function (name) {
+			if (name in e) {
+				this[name] = {
+					get: function () {
+						return props[name] || eventPropDesc[name];
+					}
+				};
+			} else {
+				this[name] = {
+					value: props[name] || eventPropDesc[name]
+				};
+			}
+		}, propsDesc);
+		Object.defineProperties(e, propsDesc);
+		return e;
+	}
 
 	/**
 	 * creates a synthetic click event with properties based on another event.
@@ -108,10 +198,10 @@ define([
 				configurable: false
 			});
 		}
-		e.initMouseEvent((dblClick) ? "dblclick" : "click", true, // bubbles
+		e.initMouseEvent(dblClick ? "dblclick" : "click", true, // bubbles
 			true, // cancelable
 			sourceEvent.view,
-			sourceEvent.detail,
+			dblClick ? 2 : 1,
 			sourceEvent.screenX,
 			sourceEvent.screenY,
 			sourceEvent.clientX,
@@ -248,88 +338,7 @@ define([
 		utils.removeEventListener(window.document, "click", clickHandler, true);
 	};
 
-
 	/**
-	 *
-	 * @param pointerType pointer event type name ("pointerdown", "pointerup"...)
-	 * @param props event properties
-	 * @returns MouseEvent
-	 */
-	/*jshint maxcomplexity: 15*/
-	function createMouseEvent(pointerType, props) {
-		// Mouse Event spec
-		// http://www.w3.org/TR/2001/WD-DOM-Level-3-Events-20010823/events.html#Events-eventgroupings-mouseevents
-		// DOM4 Event: https://dvcs.w3.org/hg/d4e/raw-file/tip/source_respec.htm
-		if (utils.SUPPORT_MOUSE_EVENT_CONSTRUCTOR) {
-			return new MouseEvent(pointerType, props);
-		}
-		var e = document.createEvent("MouseEvents");
-
-		e.initMouseEvent(
-			pointerType,
-			(props.bubbles),
-			(props.cancelable),
-			(props.view) || null,
-			(props.detail) || null,
-			(props.screenX) || 0,
-			(props.screenY) || 0,
-			(props.clientX) || 0,
-			(props.clientY) || 0,
-			(props.ctrlKey) || false,
-			(props.altKey) || false,
-			(props.shiftKey) || false,
-			(props.metaKey) || false,
-			(props.button) || 0,
-			(props.relatedTarget) ||
-				null);
-		return e;
-	}
-
-	/**
-	 *
-	 * @param e event
-	 * @param buttonsValue buttons property value
-	 */
-	function fixButtonsProperties(e, buttonsValue) {
-		if (!("buttons" in e)) {
-			Object.defineProperty(e, "buttons", {
-				value: (buttonsValue || 0),
-				enumerable: true,
-				writable: false
-			});
-		} else {
-			Object.defineProperty(e, "buttons", {
-				get: function () {
-					return buttonsValue;
-				},
-				enumerable: true
-			});
-		}
-	}
-
-	/**
-	 *
-	 * @param e event
-	 * @param props event properties
-	 */
-	function setPointerProperties(e, props) {
-		// Pointer events default values:
-		// http://www.w3.org/TR/pointerevents/#pointerevent-interface
-		Object.defineProperties(e, {
-			pointerId: { value: props.pointerId || 0, enumerable: true},
-			width: {value: props.width || 0, enumerable: true},
-			height: {value: props.height || 0, enumerable: true    },
-			pressure: {value: props.pressure || 0, enumerable: true},
-			tiltX: {value: props.tiltX || 0, enumerable: true},
-			tiltY: {value: props.tiltY || 0, enumerable: true},
-			pointerType: {value: props.pointerType || "", enumerable: true},
-			hwTimestamp: {value: props.hwTimestamp || 0, enumerable: true},
-			isPrimary: {value: props.isPrimary || false, enumerable: true}
-		});
-	}
-
-	/**
-	 *
 	 * @param e event
 	 * @param nativeEvent underlying event which contributes to this pointer event.
 	 */
@@ -337,16 +346,27 @@ define([
 		if (e.type === utils.GOTCAPTURE || e.type === utils.LOSTCAPTURE) {
 			return; //no default action on pointercapture events
 		}
-		var _stopPropagation = e.stopPropagation,
-			_preventDefault = e.preventDefault;
-		e.stopPropagation = function () {
-			nativeEvent.stopPropagation();
-			_stopPropagation.apply(this);
-		};
-		e.preventDefault = function () {
-			nativeEvent.preventDefault();
-			_preventDefault.apply(this);
-		};
+		if (e.bubbles) {
+			var _stopPropagation = e.stopPropagation;
+			e.stopPropagation = function () {
+				nativeEvent.stopPropagation();
+				_stopPropagation.apply(this);
+			};
+			if (e.stopImmediatePropagation) {
+				var _stopImmediatePropagation = e.stopImmediatePropagation;
+				e.stopImmediatePropagation = function () {
+					nativeEvent.stopImmediatePropagation();
+					_stopImmediatePropagation.apply(this);
+				};
+			}
+		}
+		if (eventTypeDesc[e.type].cancelable) {
+			var _preventDefault = e.preventDefault;
+			e.preventDefault = function () {
+				nativeEvent.preventDefault();
+				_preventDefault.apply(this);
+			};
+		}
 	}
 
 	/**

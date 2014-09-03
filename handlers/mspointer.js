@@ -54,7 +54,7 @@ define([
 	function msPointerOut(e) {
 		utils.dispatchEvent(e.target, createPointer(utils.events.OUT, e, {}));
 		// generate  pointerleave events
-		utils.dispatchLeaveEvents(e.target, e.relatedTarget, createPointer(utils.events.LEAVE, e, {bubbles: false}));
+		utils.dispatchLeaveEvents(e.target, e.relatedTarget, createPointer(utils.events.LEAVE, e));
 	}
 
 	/**
@@ -65,7 +65,7 @@ define([
 	function msPointerOver(e) {
 		utils.dispatchEvent(e.target, createPointer(utils.events.OVER, e, {}));
 		// generate  pointerenter events
-		utils.dispatchEnterEvents(e.target, e.relatedTarget, createPointer(utils.events.ENTER, e, {bubbles: false}));
+		utils.dispatchEnterEvents(e.target, e.relatedTarget, createPointer(utils.events.ENTER, e));
 	}
 
 	/**
@@ -106,9 +106,6 @@ define([
 	function createPointer(pointerType, msPointerEvent, props) {
 		props = props || {};
 		// Mouse events properties
-		props.bubbles = msPointerEvent.bubbles;
-		props.cancelable = msPointerEvent.cancelable;
-		props.view = msPointerEvent.view;
 		props.detail = msPointerEvent.detail;
 		props.screenX = msPointerEvent.screenX;
 		props.screenY = msPointerEvent.screenY;

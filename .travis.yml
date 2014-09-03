@@ -10,5 +10,9 @@ script:
 - grunt jshint test:remote
 env:
   global:
+  # ibm-js
   - secure: qWxE8Cml8cm35ztk4EAusV0WF7akjEjaH6GLjbAcpWTmQqLFHPbPODI0V7V6n9n2Cvxm7eV+70KTg7SgDa62pQndqlcP83mW0hnmfrbWwH0AsNYwDOnvfFDhCLDYN3dGpe7tQr0pLUNil6J/g7E6YYJmFxOrLDp3Y238c77Xdh8=
   - secure: S2opjyuFArWLEl9H/82PYcHq63XNG6u9nCYZ+CobPT+h8CpKeoNfNwdwGyVnabLftbrB4c/y+L+DHT6p1G8PIr0Cm0T97ij5SRIsiFW/MqKL9NIzLiM/euXRvrQCkKBKndPo3DqYUe1iJIVNfmT8KtcAA0krQT9x2J258bsNo2c=
+  # seb-pereira
+  - secure: hxy7Q7rOVv372VshA/kYYHiefR0wpdgzKUDvM1Gi2+JSKEWB+iB0jFHAOfwzHLyptmGg2a1zhI9BJU4Ca9GpP205N+jh2l18PhN7kbwDfkHCA8j2+RzDmD1pqkMZC36SKpO9k282aCvRnnPRCpIjxbHtz0DYA2mIUMFHadHglLE=
+  - secure: gBlGCGiNdjumzsIO68ckBHw8H0/w0zt8wyUZh5fpkj3b/95yzvMmvwGlXGBzOX1YDO+S+BMrJt3HcjkhixjtZx4jEWwuoBylxSHybJ6b1V1nd6FWL8AFbl9O95cWCSkyktatKrV4NYjKjtmBHEUT9LYzEvMs9NnVMzkJ4GKouX8=

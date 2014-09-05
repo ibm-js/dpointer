@@ -5,8 +5,9 @@
  * todo: pointerenter/pointerleave: generate on capture when target is the originated element.
  */
 define([
+	"./touchTracker",
 	"./utils"
-], function (utils) {
+], function (tracker, utils) {
 	"use strict";
 
 	var TouchEvents = {
@@ -42,16 +43,16 @@ define([
 			// handled by the user agent. The current event is related to a new pointer which contributes to a
 			// multi touch gesture: we must absorb this event and cancel the primary pointer to let the user agent
 			// handle the default action.
-			if (TouchTracker.hasPrimary() && (touchAction === utils.TouchAction.AUTO)) {
+			if (tracker.hasPrimary() && (touchAction === utils.TouchAction.AUTO)) {
 				// fire pointerout > pointercancel for current primary pointer
-				var lastNativeEvent = TouchTracker.getPrimaryTouchEvent();
-				var lastTouch = TouchTracker.getPrimaryTouch();
-				touchTarget = TouchTracker.identifyPrimaryTouchTarget(lastTouch.target);
+				var lastNativeEvent = tracker.getPrimaryTouchEvent();
+				var lastTouch = tracker.getPrimaryTouch();
+				touchTarget = tracker.identifyPrimaryTouchTarget(lastTouch.target);
 				utils.dispatchEvent(touchTarget, createPointer(utils.events.OUT, lastNativeEvent, lastTouch, {}));
 				utils.dispatchEvent(touchTarget, createPointer(utils.events.CANCEL, lastNativeEvent, lastTouch, {}));
-				TouchTracker.implicitReleaseCapture(lastTouch.identifier);
+				releaseCapture(lastTouch.identifier); //implicit release
 				// cancel the primary pointer to avoid duplicate generation of PointerOut > PointerCancel
-				TouchTracker.unregister(lastTouch.identifier);
+				tracker.unregister(lastTouch.identifier);
 			} else {
 				if (touchAction !== utils.TouchAction.AUTO) {
 					if (DoubleTap.isEligible(touch.target)) {
@@ -62,8 +63,8 @@ define([
 				// to set a pointer capture on the element, so we must:
 				// - register the pointer *before* firing the events.
 				// - update the tracker *before* firing the events.
-				TouchTracker.register(touch.identifier, touchAction);
-				TouchTracker.update(touch, e, touch.target);
+				tracker.register(touch.identifier, touchAction);
+				tracker.update(touch, e, touch.target);
 				// fire pointerover > pointerdown
 				utils.dispatchEvent(touch.target, createPointer(utils.events.OVER, e, touch, {}));
 				utils.dispatchEvent(touch.target, createPointer(utils.events.DOWN, e, touch, {}));
@@ -80,12 +81,12 @@ define([
 		var touch;
 		for (var l = e.changedTouches.length, i = 0; i < l; i++) {
 			touch = e.changedTouches.item(i);
-			if (!TouchTracker.isActive(touch.identifier)) {
+			if (!tracker.isActive(touch.identifier)) {
 				return;
 			}
 			// browser default actions
-			if (TouchTracker.getTouchAction(touch.identifier) === utils.TouchAction.AUTO) {
-				var lastNativeEventType = TouchTracker.getTouchEvent(touch.identifier).type;
+			if (tracker.getTouchAction(touch.identifier) === utils.TouchAction.AUTO) {
+				var lastNativeEventType = tracker.getTouchEvent(touch.identifier).type;
 				switch (lastNativeEventType) {
 				case TouchEvents.touchstart:
 					// (1) fire PointerOut > PointerCancel
@@ -99,11 +100,11 @@ define([
 					// events flow already ended (previous touchmove already removed pointer from tracker to
 					// prevent PointerEvent to be fired)
 				}
-				TouchTracker.implicitReleaseCapture(touch.identifier);
-				TouchTracker.unregister(touch.identifier);
+				releaseCapture(touch.identifier); //implicit release
+				tracker.unregister(touch.identifier);
 			} else { // always map PointerMove when touch action is set (none/pan-x/pan-y)
-				var touchTarget = TouchTracker.identifyTouchTarget(touch.identifier, elementFromTouch(touch));
-				var lastElementFromPoint = TouchTracker.getTargetElement(touch.identifier);
+				var touchTarget = tracker.identifyTouchTarget(touch.identifier, elementFromTouch(touch));
+				var lastElementFromPoint = tracker.getTargetElement(touch.identifier);
 				// check if the pointer is moving out from the current target element
 				if (touchTarget !== lastElementFromPoint) {
 					// expected sequence of events:
@@ -125,7 +126,7 @@ define([
 				} else {
 					utils.dispatchEvent(touchTarget, createPointer(utils.events.MOVE, e, touch, {}));
 				}
-				TouchTracker.update(touch, e, touchTarget);
+				tracker.update(touch, e, touchTarget);
 				// default actions must be prevented
 				e.preventDefault();
 			}
@@ -141,15 +142,15 @@ define([
 		var touch;
 		for (var l = e.changedTouches.length, i = 0; i < l; i++) {
 			touch = e.changedTouches.item(i);
-			if (!TouchTracker.isActive(touch.identifier)) {
+			if (!tracker.isActive(touch.identifier)) {
 				return;
 			}
-			var lastNativeEventType = TouchTracker.getTouchEvent(touch.identifier).type;
+			var lastNativeEventType = tracker.getTouchEvent(touch.identifier).type;
 			// elementFromPoint may return null on android when user makes a pinch 2 zoom gesture
 			// in that case we use the current touch.target.
 			var elementFromPoint = elementFromTouch(touch) || touch.target;
-			var touchTarget = TouchTracker.identifyTouchTarget(touch.identifier, elementFromPoint);
-			if (TouchTracker.getTouchAction(touch.identifier) === utils.TouchAction.AUTO) {
+			var touchTarget = tracker.identifyTouchTarget(touch.identifier, elementFromPoint);
+			if (tracker.getTouchAction(touch.identifier) === utils.TouchAction.AUTO) {
 				// default action handled by user agent
 				switch (lastNativeEventType) {
 				case TouchEvents.touchmove:
@@ -189,8 +190,8 @@ define([
 					// "touchend event with touch action!=auto and lastNativeEventType=[" + lastNativeEventType + "]"
 				}
 			}
-			TouchTracker.implicitReleaseCapture(touch.identifier);
-			TouchTracker.unregister(touch.identifier);
+			releaseCapture(touch.identifier); // implicit release
+			tracker.unregister(touch.identifier);
 		}
 	}
 
@@ -203,13 +204,13 @@ define([
 		var touch;
 		for (var l = e.changedTouches.length, i = 0; i < l; i++) {
 			touch = e.changedTouches.item(i);
-			if (!TouchTracker.isActive(touch.identifier)) {
+			if (!tracker.isActive(touch.identifier)) {
 				return;
 			}
-			utils.dispatchEvent(TouchTracker.identifyTouchTarget(touch.identifier, elementFromTouch(touch)),
+			utils.dispatchEvent(tracker.identifyTouchTarget(touch.identifier, elementFromTouch(touch)),
 				createPointer(utils.events.CANCEL, e, touch, {}));
-			TouchTracker.implicitReleaseCapture(touch.identifier);
-			TouchTracker.unregister(touch.identifier);
+			releaseCapture(touch.identifier); // implicit release
+			tracker.unregister(touch.identifier);
 		}
 	}
 
@@ -235,7 +236,7 @@ define([
 		props.metaKey = touchEvent.metaKey;
 		props.pageX = touch.pageX;
 		props.pageY = touch.pageY;
-		if (TouchTracker.hasCapture(touch.identifier)) {  // W3C spec §10.1
+		if (tracker.hasCapture(touch.identifier)) {  // W3C spec §10.1
 			props.relatedTarget = null;
 		}
 		// normalize button/buttons values
@@ -246,7 +247,7 @@ define([
 		// Pointer Events properties
 		props.pointerId = touch.identifier + 2; // avoid id collision: 1 is reserved for mouse events mapping
 		props.pointerType = "touch";
-		props.isPrimary = TouchTracker.isPrimary(touch.identifier);
+		props.isPrimary = tracker.isPrimary(touch.identifier);
 		return new utils.Pointer(pointerType, touchEvent, props);
 	}
 
@@ -259,7 +260,7 @@ define([
 	function fireSyntheticClick(target, touch) {
 		// IE10 always generates a click for every pointer when there is multiple touches
 		// todo: investigate how IE11 handles clicks when there is multiple touches
-		if (TouchTracker.isPrimary(touch.identifier)) {
+		if (tracker.isPrimary(touch.identifier)) {
 			// here we choose to fire click/dblclick only for primary pointer
 			utils.dispatchEvent(target, utils.createSyntheticClick(touch));
 			// dispatch double tap if eligible
@@ -285,109 +286,20 @@ define([
 		return touch.target.ownerDocument.elementFromPoint(touch.clientX, touch.clientY);
 	}
 
-	// todo:refactor + document TouchTracker/TouchInfo
-	/*	function TouchInfo(touchId, touchAction) {
-	 this.touchId = touchId;
-	 this.touchAction = 0;
-	 this.lastNativeEvent = null;
-	 this.lastTargetElement = null;
-	 this.captureTarget = null;
-	 }*/
-	var TouchTracker = {
-		// touchId of the primary pointer, or -1 if no primary pointer set.
-		primaryTouchId: -1,
-		register: function (touchId, touchAction) {
-			// the first touch to register becomes the primary pointer
-			if (this.primaryTouchId === -1) {
-				this.primaryTouchId = touchId;
-			}
-			this[touchId] = {};
-			this[touchId]._touchAction = touchAction;
-		},
-		update: function (touch, touchEvent, targetElement) {
-			this[touch.identifier]._lastTouch = touch;
-			this[touch.identifier]._lastNativeEvent = touchEvent;
-			this[touch.identifier]._lastTargetElement = targetElement;
-		},
-		getTouchAction: function (touchId) {
-			return this[touchId]._touchAction;
-		},
-		getTouch: function (touchId) {
-			return this[touchId]._lastTouch;
-		},
-		getTouchEvent: function (touchId) {
-			return this[touchId]._lastNativeEvent;
-		},
-		getTargetElement: function (touchId) {
-			return this[touchId]._lastTargetElement;
-		},
-		unregister: function (touchId) {
-			if (this.primaryTouchId === touchId) {
-				this.primaryTouchId = -1;
-			}
-			return (delete this[touchId]);
-		},
-		isActive: function (touchId) {
-			return (touchId in this);
-		},
-		// touch target depends whether capture has been set on the pointer
-		identifyTouchTarget: function (touchId, nonCapturedElement) {
-			return (this[touchId] && this[touchId]._captureTarget) || nonCapturedElement;
-		},
-		hasPrimary: function () {
-			return (this.primaryTouchId !== -1);
-		},
-		isPrimary: function (touchId) {
-			return (this.primaryTouchId === touchId);
-		},
-		getPrimaryTouchEvent: function () {
-			return this[this.primaryTouchId]._lastNativeEvent;
-		},
-		getPrimaryTouch: function () {
-			return this[this.primaryTouchId]._lastTouch;
-		},
-		identifyPrimaryTouchTarget: function (nonCapturedElement) {
-			return this.identifyTouchTarget(this.primaryTouchId, nonCapturedElement);
-		},
-		setCapture: function (touchId, targetElement) {
-			// 1. check if pointer is active, otw throw DOMException with the name InvalidPointerId.
-			if (!this.isActive(touchId)) {
-				throw "InvalidPointerId";
-			}
-			// 2. pointer must have active buttons, otherwise return
-			// 3. register capture on this element.
-			this[touchId]._captureTarget = targetElement;
-			// 4. Fire a gotpointercapture event at the targetElement
-			utils.dispatchEvent(this.getTouch(touchId).target,
-				createPointer(utils.events.GOTCAPTURE, this.getTouchEvent(touchId), this.getTouch(touchId), {}));
+	function releaseCapture(touchId, targetElement) {
+		if (tracker.releaseCapture(touchId, targetElement)) {
+			// 4. Fire a lostpointercapture event at the targetElement
+			utils.dispatchEvent(
+				tracker.getLastTouch(touchId).target,
+				createPointer(utils.events.LOSTCAPTURE,
+					tracker.getTouchEvent(touchId),
+					tracker.getLastTouch(touchId), {}
+				)
+			);
 			return true;
-		},
-		hasCapture: function (touchId) {
-			return !!(this[touchId]._captureTarget);
-		},
-		releaseCapture: function (touchId, targetElement, implicit) {
-			// 1. check if pointerId is active, otw throw DOMException with the name InvalidPointerId.
-			if (!this.isActive(touchId)) {
-				throw "InvalidPointerId";
-			}
-			// 2. if pointer capture not set at targetElement, return
-			if (!implicit && (this[touchId]._captureTarget !== targetElement)) {
-				return false;
-			}
-			// 3. release capture
-			if (this[touchId]._captureTarget) {
-				this[touchId]._captureTarget = null;
-				// 4. Fire a lostpointercapture event at the targetElement
-				utils.dispatchEvent(TouchTracker.getTouch(touchId).target,
-					createPointer(utils.events.LOSTCAPTURE, TouchTracker.getTouchEvent(touchId),
-						TouchTracker.getTouch(touchId), {}));
-			}
-			return true;
-		},
-		implicitReleaseCapture: function (touchId) {
-			return this.releaseCapture(touchId, null, true);
 		}
-	};
+		return false;
+	}
 
 	return {
 		/**
@@ -422,7 +334,17 @@ define([
 		 * @param pointerId Id of the capturing Pointer
 		 */
 		setPointerCapture: function (targetElement, pointerId) {
-			return TouchTracker.setCapture(pointerId - 2, targetElement);
+			var touchId = pointerId - 2;
+			tracker.setCapture(touchId, targetElement);
+			// 4. Fire a gotpointercapture event at the targetElement
+			utils.dispatchEvent(
+				tracker.getLastTouch(touchId).target,
+				createPointer(utils.events.GOTCAPTURE,
+					tracker.getTouchEvent(touchId),
+					tracker.getLastTouch(touchId), {}
+				)
+			);
+			return true;
 		},
 
 		/**
@@ -432,7 +354,7 @@ define([
 		 * @param pointerId Id of the capturing Pointer
 		 */
 		releasePointerCapture: function (targetElement, pointerId) {
-			return TouchTracker.releaseCapture(pointerId - 2, targetElement, false);
+			return releaseCapture(pointerId - 2, targetElement);
 		}
 	};
 });

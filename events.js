@@ -6,7 +6,7 @@ define([
 	"./handlers/utils",
 	"./handlers/touch",
 	"./handlers/mouse",
-	"./handlers/mspointer"
+	"./handlers/features!mspointer?./handlers/mspointer"
 ], function (has, utils, touch, mouse, mspointer) {
 	"use strict";
 
@@ -53,7 +53,7 @@ define([
 		if (this._targetElement) {
 			touch.deregisterHandlers(this._targetElement);
 			mouse.deregisterHandlers(this._targetElement);
-			mspointer.deregisterHandlers(this._targetElement);
+			mspointer && mspointer.deregisterHandlers(this._targetElement);
 			deregisterClickHandler();
 		}
 		this._targetElement = null;

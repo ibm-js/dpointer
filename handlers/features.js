@@ -2,7 +2,7 @@
  * 
  */
 define([
-	"../../requirejs-dplugins/has"
+	"requirejs-dplugins/has"
 ], function (has) {
 	has.add("touch", "ontouchstart" in document); // UA supports Touch Events
 	has.add("pointer", "onpointerdown" in document); // UA supports Pointer Events

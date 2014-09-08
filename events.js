@@ -149,6 +149,16 @@ define([
 	if (has("mspointer")) {
 		insertTouchActionCSSRule("-ms-touch-action");
 	}
+	// CSS rule to map CSS attribute in case user agent has native support for touch-action or -ms-touch-action
+	// CSS property.
+	if (has("touchAction")) {
+		insertTouchActionCSSRule("touch-action");
+	} else {
+		// CSS rule for IE10 and IE11 preview
+		if (has("msTouchAction")) {
+			insertTouchActionCSSRule("-ms-touch-action");
+		}
+	}
 
 	/**
 	 * register click handler.

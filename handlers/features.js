@@ -9,5 +9,7 @@ define([
 	has.add("mspointer", "onmspointerdown" in document); // UA supports Pointer Events (IE10+IE11 preview)
 	has.add("chrome", /chrome/i.test(navigator.userAgent)); // UA is chrome.
 	has.add("mobile", /(mobile)|(android)/i.test(navigator.userAgent)); // mobile device
+	has.add("touchAction", "touchAction" in document.body.style);// touch-action CSS
+	has.add("msTouchAction", "msTouchAction" in document.body.style);// -ms-touch-action CSS
 	return has;
 });

@@ -5,9 +5,10 @@
  * todo: pointerenter/pointerleave: generate on capture when target is the originated element.
  */
 define([
+	"./features",
 	"./touchTracker",
 	"./utils"
-], function (tracker, utils) {
+], function (has, tracker, utils) {
 	"use strict";
 
 	var TouchEvents = {
@@ -127,8 +128,11 @@ define([
 					utils.dispatchEvent(touchTarget, createPointer(utils.events.MOVE, e, touch, {}));
 				}
 				tracker.update(touch, e, touchTarget);
-				// default actions must be prevented
-				e.preventDefault();
+				// touch default actions must be prevented.
+				// Let user agent handle it if it supports the touch-action CSS property.
+				if (!has("touchAction")) {
+					e.preventDefault();
+				}
 			}
 		}
 	}

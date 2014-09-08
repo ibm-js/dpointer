@@ -89,39 +89,6 @@ define([
 	})();
 
 	/**
-	 * With touch events there is no CSS property touch-action: Touch action
-	 * is specified by the value of the HTML attribute touch-action.
-	 * This function returns the touch action which applies to the element, based on "touch action"
-	 * from its ancestors.
-	 * To be used only when underlying native events are touch events.
-	 *
-	 * @param targetNode DOM element
-	 * @return Number touch action value which applies to the element (auto: 0, pan-x:1, pan-y:2, none: 3)
-	 */
-	utils.getTouchAction = function (targetNode) {
-		// touch-action default value: allow default behavior (no prevent default on touch).
-		var nodeValue = utils.TouchAction.AUTO;
-		// find ancestors with "touch action" and define behavior accordingly.
-		do {
-			switch (targetNode.getAttribute && targetNode.getAttribute(utils.TouchAction.ATTR_NAME)) {
-			case "auto":
-				nodeValue = nodeValue | utils.TouchAction.AUTO;
-				break;
-			case "pan-x":
-				nodeValue = nodeValue | utils.TouchAction.PAN_X;
-				break;
-			case "pan-y":
-				nodeValue = nodeValue | utils.TouchAction.PAN_Y;
-				break;
-			case "none":
-				nodeValue = nodeValue | utils.TouchAction.NONE;
-				break;
-			}
-		} while ((nodeValue !== utils.TouchAction.NONE) && (targetNode = targetNode.parentNode));
-		return nodeValue;
-	};
-
-	/**
 	 * Pointer Event constructor.
 	 *
 	 * @param pointerType pointer event type name ("pointerdown", "pointerup"...)
@@ -325,20 +292,6 @@ define([
 	};
 
 	/**
-	 * register click handler.
-	 */
-	utils.registerClickHandler = function () {
-		utils.addEventListener(window.document, "click", clickHandler, true);
-	};
-
-	/**
-	 * deregister click handler
-	 */
-	utils.deregisterClickHandler = function () {
-		utils.removeEventListener(window.document, "click", clickHandler, true);
-	};
-
-	/**
 	 * @param e event
 	 * @param nativeEvent underlying event which contributes to this pointer event.
 	 */
@@ -367,26 +320,6 @@ define([
 				_preventDefault.apply(this);
 			};
 		}
-	}
-
-	/**
-	 * handler for Click events.
-	 *
-	 * @param e click event
-	 */
-	function clickHandler(e) {
-		//todo: normalize button/buttons/which values for click/dblclick events
-		if ("ontouchstart" in document) {//todo: should use has() module instead and
-			// (7) Android 4.1.1 generates a click after touchend even when touchstart is prevented.
-			// if we receive a native click at an element with touch action disabled we just have to absorb it.
-			// (fixed in Android 4.1.2+)
-			if (utils.isNativeClickEvent(e) && (utils.getTouchAction(e.target) !== utils.TouchAction.AUTO)) {
-				e.preventDefault();
-				e.stopImmediatePropagation();
-				return false;
-			}
-		}
-		return true;
 	}
 
 	return utils;

@@ -50,7 +50,7 @@ define([
 				}
 			}
 		}
-		utils.registerClickHandler();
+		registerClickHandler();
 		this._targetElement = targetElement;
 	};
 
@@ -62,7 +62,7 @@ define([
 			touch.deregisterHandlers(this._targetElement);
 			mouse.deregisterHandlers(this._targetElement);
 			mspointer.deregisterHandlers(this._targetElement);
-			utils.deregisterClickHandler();
+			deregisterClickHandler();
 		}
 		this._targetElement = null;
 	};
@@ -153,9 +153,42 @@ define([
 		insertTouchActionCSSRule("touch-action");
 	}
 
-	// CSS rule for IE10 and IE11 preview
+		// CSS rule for IE10 and IE11 preview
 	if (feature.mspointer) {
 		insertTouchActionCSSRule("-ms-touch-action");
+	}
+
+	/**
+	 * register click handler.
+	 */
+	function registerClickHandler() {
+		utils.addEventListener(window.document, "click", clickHandler, true);
+	}
+
+	/**
+	 * deregister click handler
+	 */
+	function deregisterClickHandler() {
+		utils.removeEventListener(window.document, "click", clickHandler, true);
+	}
+
+	/**
+	 * handler for Click events.
+	 *
+	 * @param e click event
+	 */
+	function clickHandler(e) {
+		if (feature.touch) {
+			// (7) Android 4.1.1 generates a click after touchend even when touchstart is prevented.
+			// if we receive a native click at an element with touch action disabled we just have to absorb it.
+			// (fixed in Android 4.1.2+)
+			if (utils.isNativeClickEvent(e) && (touch.determineTouchAction(e.target) !== utils.TouchAction.AUTO)) {
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				return false;
+			}
+		}
+		return true;
 	}
 
 	// start listening to native events

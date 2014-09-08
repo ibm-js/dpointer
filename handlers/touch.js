@@ -37,7 +37,7 @@ define([
 		for (var l = e.changedTouches.length, i = 0; i < l; i++) {
 			touch = e.changedTouches.item(i);
 			touchTarget = null;
-			touchAction = utils.getTouchAction(touch.target);
+			touchAction = determineTouchActionFromAttr(touch.target);
 			// before doing anything, we check if there is already an active primary pointer:
 			// if default touch action!=auto on the target element, the touch action must be
 			// handled by the user agent. The current event is related to a new pointer which contributes to a
@@ -301,6 +301,39 @@ define([
 		return false;
 	}
 
+	/**
+	 * With touch events there is no CSS property touch-action: Touch action
+	 * is specified by the value of the HTML attribute touch-action.
+	 * This function returns the touch action which applies to the element, based on "touch action"
+	 * from its ancestors.
+	 * To be used only when underlying native events are touch events.
+	 *
+	 * @param targetNode DOM element
+	 * @return Number touch action value which applies to the element (auto: 0, pan-x:1, pan-y:2, none: 3)
+	 */
+	function determineTouchActionFromAttr(targetNode) {
+		// touch-action default value: allow default behavior (no prevent default on touch).
+		var nodeValue = utils.TouchAction.AUTO;
+		// find ancestors with "touch action" and define behavior accordingly.
+		do {
+			switch (targetNode.getAttribute && targetNode.getAttribute(utils.TouchAction.ATTR_NAME)) {
+			case "auto":
+				nodeValue = nodeValue | utils.TouchAction.AUTO;
+				break;
+			case "pan-x":
+				nodeValue = nodeValue | utils.TouchAction.PAN_X;
+				break;
+			case "pan-y":
+				nodeValue = nodeValue | utils.TouchAction.PAN_Y;
+				break;
+			case "none":
+				nodeValue = nodeValue | utils.TouchAction.NONE;
+				break;
+			}
+		} while ((nodeValue !== utils.TouchAction.NONE) && (targetNode = targetNode.parentNode));
+		return nodeValue;
+	}
+
 	return {
 		/**
 		 * register touch events handlers.
@@ -355,6 +388,14 @@ define([
 		 */
 		releasePointerCapture: function (targetElement, pointerId) {
 			return releaseCapture(pointerId - 2, targetElement);
+		},
+
+		/**
+		 * @param targetNode DOM element
+		 * @return Number touch action value which applies to the element (auto: 0, pan-x:1, pan-y:2, none: 3)
+		 */
+		determineTouchAction: function (targetNode) {
+			return determineTouchActionFromAttr(targetNode);
 		}
 	};
 });

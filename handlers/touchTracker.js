@@ -101,10 +101,12 @@ define([
 			if (!this.isActive(touchId)) {
 				throw new Error("InvalidPointerId");
 			}
-			if (!targetElement || // implicit release
-				(targetElement === t[touchId].capturedTarget)) {
+			if (targetElement && targetElement !== t[touchId].capturedTarget) {
+				// explicit release but capture element doesn't match
+				return false;
+			}
+			if (t[touchId].capturedTarget) {
 				t[touchId].capturedTarget = null;
-				// capture was set at target element
 				return true;
 			} else {
 				return false;

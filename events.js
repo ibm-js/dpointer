@@ -2,23 +2,15 @@
  * Pointer Events shim
  */
 define([
+	"./handlers/features",
 	"./handlers/utils",
 	"./handlers/touch",
 	"./handlers/mouse",
 	"./handlers/mspointer"
-], function (utils, touch, mouse, mspointer) {
+], function (has, utils, touch, mouse, mspointer) {
 	"use strict";
 
-	var pointerEvents = {_targetElement: null},
-		feature = {
-			//todo: should use has() module instead and
-			//consider loading touch and mspointer modules conditionally.
-			touch: ("ontouchstart" in document),
-			pointer: ("onpointerdown" in document),
-			mspointer: ("onmspointerdown" in document),
-			chrome: /chrome/i.test(navigator.userAgent),
-			mobile: /(mobile)|(android)/i.test(navigator.userAgent)
-		};
+	var pointerEvents = {_targetElement: null};
 
 	/**
 	 * Enable Pointer events. Register native event handlers. Importing this module automatically register native
@@ -32,14 +24,14 @@ define([
 		if (this._targetElement) {
 			return;// already initialized
 		}
-		if (!feature.pointer) {
-			if (feature.mspointer) {
+		if (!has("pointer")) {
+			if (has("mspointer")) {
 				mspointer.registerHandlers(targetElement);
 			} else {
-				if (feature.touch) {
-					if (!feature.mobile) {
+				if (has("touch")) {
+					if (!has("mobile")) {
 						mouse.registerHandlers(targetElement);
-						if (feature.chrome) {
+						if (has("chrome")) {
 							touch.registerHandlers(targetElement);
 						}
 					} else {
@@ -91,10 +83,10 @@ define([
 		if (!this._targetElement) {
 			return false;// not initialized
 		}
-		if (feature.pointer) {
+		if (has("pointer")) {
 			return targetElement.setPointerCapture(pointerId);// use native Pointer Events method
 		} else {
-			if (feature.mspointer) {
+			if (has("mspointer")) {
 				return targetElement.msSetPointerCapture(pointerId);// use native Pointer Events method
 			} else {
 				if (pointerId === 1) { // mouse always gets ID = 1
@@ -116,10 +108,10 @@ define([
 		if (!this._targetElement) {
 			return false;
 		}
-		if (feature.pointer) {
+		if (has("pointer")) {
 			return targetElement.releasePointerCapture(pointerId);
 		} else {
-			if (feature.mspointer) {
+			if (has("mspointer")) {
 				return targetElement.msReleasePointerCapture(pointerId);
 			} else {
 				if (pointerId === 1) {
@@ -149,12 +141,12 @@ define([
 	}
 
 	// CSS rule when user agent implements W3C Pointer Events or when a polyfill is in place.
-	if (feature.pointer) {
+	if (has("pointer")) {
 		insertTouchActionCSSRule("touch-action");
 	}
 
 		// CSS rule for IE10 and IE11 preview
-	if (feature.mspointer) {
+	if (has("mspointer")) {
 		insertTouchActionCSSRule("-ms-touch-action");
 	}
 
@@ -178,7 +170,7 @@ define([
 	 * @param e click event
 	 */
 	function clickHandler(e) {
-		if (feature.touch) {
+		if (has("touch")) {
 			// (7) Android 4.1.1 generates a click after touchend even when touchstart is prevented.
 			// if we receive a native click at an element with touch action disabled we just have to absorb it.
 			// (fixed in Android 4.1.2+)

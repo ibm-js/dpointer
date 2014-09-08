@@ -2,6 +2,7 @@
 	"name": "dpointer",
 	"version": "0.1.2",
 	"dependencies": {
+		"requirejs-dplugins": "0.2.x"
 	},
 	"devDependencies": {
 		"intern": "1.6.x",

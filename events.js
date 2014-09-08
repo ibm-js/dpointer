@@ -14,8 +14,8 @@ define([
 			//todo: should use has() module instead and
 			//consider loading touch and mspointer modules conditionally.
 			touch: ("ontouchstart" in document),
-			pointer: (!!window.navigator.pointerEnabled),
-			mspointer: (!!window.navigator.msPointerEnabled),
+			pointer: ("onpointerdown" in document),
+			mspointer: ("onmspointerdown" in document),
 			chrome: /chrome/i.test(navigator.userAgent),
 			mobile: /(mobile)|(android)/i.test(navigator.userAgent)
 		};

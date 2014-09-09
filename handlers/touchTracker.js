@@ -1,27 +1,36 @@
 define([
-], function () {
+	"./utils"
+], function (utils) {
 	"use strict";
-	
-	var TouchInfo = function (touchAction) {
+
+	var TouchInfo = function (touchAction, pageX, pageY) {
 		this.touchAction = touchAction;
 		this.lastNativeEvent = null; // undefined
 		this.lastTouch = null; // undefined
 		this.capturedTarget = null; // undefined, rename capturedTarget
 		this.lastTargetElement = null;
+		this.firstMove = {
+			startX: pageX,
+			startY: pageY
+		};
+		this.enforceTouchAction = (touchAction === utils.TouchAction.AUTO);
 	};
 
 	// touchId of the primary pointer, or -1 if no primary pointer set.
 	var primaryTouchId = -1,
-		t = {};
+		t = {},
+		canScroll = function (a1, b1, a2, b2) {
+			return Math.abs(a2 - a1) / Math.abs(b2 - b1) > 0.7;
+		};
 
 	return {
 
-		register: function (touchId, touchAction) {
+		register: function (touchId, touchAction, touch) {
 			// the first touch to register becomes the primary pointer
 			if (primaryTouchId === -1) {
 				primaryTouchId = touchId;
 			}
-			t[touchId] = new TouchInfo(touchAction);
+			t[touchId] = new TouchInfo(touchAction, touch.pageX, touch.pageY);
 		},
 
 		unregister: function (touchId) {
@@ -47,6 +56,27 @@ define([
 
 		getTouchAction: function (touchId) {
 			return t[touchId].touchAction;
+		},
+
+		updateScroll: function (touch) {
+			if (t[touch.identifier].firstMove) {
+				var touchInfo = t[touch.identifier];
+				if (touchInfo.touchAction === utils.TouchAction.PAN_Y) {
+					touchInfo.enforceTouchAction =
+						canScroll(touchInfo.firstMove.startY, touchInfo.firstMove.startX, touch.pageY, touch.pageX);
+				} else {
+					if (touchInfo.touchAction === utils.TouchAction.PAN_X) {
+						touchInfo.enforceTouchAction =
+							canScroll(touchInfo.firstMove.startX, touchInfo.firstMove.startY, touch.pageX, touch.pageY);
+					}
+				}
+				touchInfo.firstMove = false;
+			}
+		},
+
+
+		isTouchActionEnforced: function (touchId) {
+			return t[touchId].enforceTouchAction;
 		},
 
 		getLastTouch: function (touchId) {

@@ -64,7 +64,7 @@ define([
 				// to set a pointer capture on the element, so we must:
 				// - register the pointer *before* firing the events.
 				// - update the tracker *before* firing the events.
-				tracker.register(touch.identifier, touchAction);
+				tracker.register(touch.identifier, touchAction, touch);
 				tracker.update(touch, e, touch.target);
 				// fire pointerover > pointerdown
 				utils.dispatchEvent(touch.target, createPointer(utils.events.OVER, e, touch, {}));
@@ -85,8 +85,9 @@ define([
 			if (!tracker.isActive(touch.identifier)) {
 				return;
 			}
+			tracker.updateScroll(touch);
 			// browser default actions
-			if (tracker.getTouchAction(touch.identifier) === utils.TouchAction.AUTO) {
+			if (tracker.isTouchActionEnforced(touch.identifier)) {
 				var lastNativeEventType = tracker.getTouchEvent(touch.identifier).type;
 				switch (lastNativeEventType) {
 				case TouchEvents.touchstart:
@@ -154,7 +155,7 @@ define([
 			// in that case we use the current touch.target.
 			var elementFromPoint = elementFromTouch(touch) || touch.target;
 			var touchTarget = tracker.identifyTouchTarget(touch.identifier, elementFromPoint);
-			if (tracker.getTouchAction(touch.identifier) === utils.TouchAction.AUTO) {
+			if (tracker.isTouchActionEnforced(touch.identifier)) {
 				// default action handled by user agent
 				switch (lastNativeEventType) {
 				case TouchEvents.touchmove:

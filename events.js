@@ -28,15 +28,8 @@ define([
 			if (has("mspointer-events")) {
 				mspointer.registerHandlers(targetElement);
 			} else {
-				if (has("touch-events")) {
-					if (!has("touch-device")) {
-						mouse.registerHandlers(targetElement);
-						if (has("chrome")) {
-							touch.registerHandlers(targetElement);
-						}
-					} else {
-						touch.registerHandlers(targetElement);
-					}
+				if (has("touch-events") && has("touch-device")) {
+					touch.registerHandlers(targetElement);
 				} else {
 					mouse.registerHandlers(targetElement);
 				}

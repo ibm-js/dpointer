@@ -24,12 +24,12 @@ define([
 		if (this._targetElement) {
 			return;// already initialized
 		}
-		if (!has("pointer")) {
-			if (has("mspointer")) {
+		if (!has("pointer-events")) {
+			if (has("mspointer-events")) {
 				mspointer.registerHandlers(targetElement);
 			} else {
-				if (has("touch")) {
-					if (!has("mobile")) {
+				if (has("touch-events")) {
+					if (!has("touch-device")) {
 						mouse.registerHandlers(targetElement);
 						if (has("chrome")) {
 							touch.registerHandlers(targetElement);
@@ -83,10 +83,10 @@ define([
 		if (!this._targetElement) {
 			return false;// not initialized
 		}
-		if (has("pointer")) {
+		if (has("pointer-events")) {
 			return targetElement.setPointerCapture(pointerId);// use native Pointer Events method
 		} else {
-			if (has("mspointer")) {
+			if (has("mspointer-events")) {
 				return targetElement.msSetPointerCapture(pointerId);// use native Pointer Events method
 			} else {
 				if (pointerId === 1) { // mouse always gets ID = 1
@@ -108,10 +108,10 @@ define([
 		if (!this._targetElement) {
 			return false;
 		}
-		if (has("pointer")) {
+		if (has("pointer-events")) {
 			return targetElement.releasePointerCapture(pointerId);
 		} else {
-			if (has("mspointer")) {
+			if (has("mspointer-events")) {
 				return targetElement.msReleasePointerCapture(pointerId);
 			} else {
 				if (pointerId === 1) {
@@ -141,21 +141,21 @@ define([
 	}
 
 	// CSS rule when user agent implements W3C Pointer Events or when a polyfill is in place.
-	if (has("pointer")) {
+	if (has("pointer-events")) {
 		insertTouchActionCSSRule("touch-action");
 	}
 
 		// CSS rule for IE10 and IE11 preview
-	if (has("mspointer")) {
+	if (has("mspointer-events")) {
 		insertTouchActionCSSRule("-ms-touch-action");
 	}
 	// CSS rule to map CSS attribute in case user agent has native support for touch-action or -ms-touch-action
 	// CSS property.
-	if (has("touchAction")) {
+	if (has("css-touch-action")) {
 		insertTouchActionCSSRule("touch-action");
 	} else {
 		// CSS rule for IE10 and IE11 preview
-		if (has("msTouchAction")) {
+		if (has("css-ms-touch-action")) {
 			insertTouchActionCSSRule("-ms-touch-action");
 		}
 	}
@@ -180,7 +180,7 @@ define([
 	 * @param e click event
 	 */
 	function clickHandler(e) {
-		if (has("touch")) {
+		if (has("touch-events")) {
 			// (7) Android 4.1.1 generates a click after touchend even when touchstart is prevented.
 			// if we receive a native click at an element with touch action disabled we just have to absorb it.
 			// (fixed in Android 4.1.2+)

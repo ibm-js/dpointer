@@ -131,7 +131,7 @@ define([
 				tracker.update(touch, e, touchTarget);
 				// touch default actions must be prevented.
 				// Let user agent handle it if it supports the touch-action CSS property.
-				if (!has("touchAction")) {
+				if (!has("css-touch-action")) {
 					e.preventDefault();
 				}
 			}

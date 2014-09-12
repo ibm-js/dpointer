@@ -6,7 +6,7 @@ define([
 	"./handlers/utils",
 	"./handlers/touch",
 	"./handlers/mouse",
-	"./handlers/features!mspointer?./handlers/mspointer"
+	"./handlers/features!mspointer-events?./handlers/mspointer"
 ], function (has, utils, touch, mouse, mspointer) {
 	"use strict";
 

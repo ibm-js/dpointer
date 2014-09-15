@@ -43,13 +43,19 @@
 		}
 	</style>
 
-	<script>var require = {baseUrl: "../.."}</script>
 	<script type="text/javascript" src="../../requirejs/require.js"></script>
+
 	<script type="text/javascript">
-		requirejs([
+		require.config({
+			baseUrl: "../.."
+		});
+	</script>
+
+	<script type="text/javascript">
+		require([
 			"dpointer/events",
 			"requirejs-domready/domReady!"
-		], function(pointer){
+		], function (pointer) {
 			try {
 				var canvas = document.getElementById("drawingArea");
 				var context = context = canvas.getContext("2d");
@@ -57,15 +63,15 @@
 				canvas.width = window.innerWidth;
 
 				// catch Pointer Move events and draw according to Pointer position
-				canvas.addEventListener("pointermove", function(event){
-					if(event.buttons > 0){
+				canvas.addEventListener("pointermove", function (event) {
+					if (event.buttons > 0) {
 						context.fillStyle = PointerColor.get(event.pointerId);
 						context.fillRect(event.clientX, event.clientY, 5, 5);
 					}
 				});
 
 				// reset canvas on double tap/click
-				canvas.addEventListener("dblclick", function(){
+				canvas.addEventListener("dblclick", function () {
 					canvas.height = window.innerHeight;
 					canvas.width = window.innerWidth;
 				});
@@ -73,10 +79,10 @@
 				var PointerColor = {
 					index: -1,
 					colors: ["#FFFF00", "#0000FF", "#FF0000", "#00FF00", "#FFFFFF"], // yellow, blue, red, green, white
-					get: function(pointerId){
+					get: function (pointerId) {
 						return ( (this[pointerId]) || ((this[pointerId]) = this.next()));
 					},
-					next: function(){
+					next: function () {
 						this.index = ((this.colors.length - this.index) == 1) ? 0 : (this.index + 1);
 						return (this.colors[this.index]);
 					}
@@ -85,7 +91,6 @@
 				alert(error);
 			}
 		});
-
 	</script>
 
 </head>

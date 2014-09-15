@@ -70,35 +70,43 @@
 		}
 	</style>
 
-	<script>var require = {baseUrl: "../.."}</script>
 	<script type="text/javascript" src="../../requirejs/require.js"></script>
+
 	<script type="text/javascript">
-		requirejs([
+		require.config({
+			baseUrl: "../.."
+		});
+	</script>
+
+	<script type="text/javascript">
+		require([
 			"dpointer/events",
 			"requirejs-domready/domReady!"
-		], function(pointer){
+		], function (pointer) {
 			var msgArea = document.getElementById("msgArea");
 
-			document.getElementById("capturedBtn").addEventListener("pointerdown", function(event){
+			document.getElementById("capturedBtn").addEventListener("pointerdown", function (event) {
 				msgArea.innerHTML = "";
 				pointer.setPointerCapture(capturedBtn, event.pointerId);
 			});
-			document.getElementById("Btn").addEventListener("pointerdown", function(event){
+
+			document.getElementById("Btn").addEventListener("pointerdown", function (event) {
 				msgArea.innerHTML = "";
 			});
 
-			document.body.addEventListener("gotpointercapture", function(event){
+			document.body.addEventListener("gotpointercapture", function (event) {
 				logit(event.target.id + ":gotpointercapture ");
 			});
-			document.body.addEventListener("lostpointercapture", function(event){
+
+			document.body.addEventListener("lostpointercapture", function (event) {
 				logit(event.target.id + ":lostpointercapture !");
 			});
 
-			document.body.addEventListener("click", function(event){
+			document.body.addEventListener("click", function (event) {
 				logit(event.target.id + ":CAPTURE:CLICK !");
 			});
 
-			document.body.addEventListener("pointermove", function(event){
+			document.body.addEventListener("pointermove", function (event) {
 				logit(event.target.id + ":pointermove (" + event.clientX + "/" + event.clientY + ")");
 			});
 
@@ -108,11 +116,11 @@
 			}, false);
 
 			// clear log on double click
-			msgArea.addEventListener("dblclick", function(event){
+			msgArea.addEventListener("dblclick", function (event) {
 				msgArea.innerHTML = "";
 			});
 
-			function logit(msg){
+			function logit(msg) {
 				msgArea.innerHTML = msg + "</br>" + msgArea.innerHTML;
 			}
 		});

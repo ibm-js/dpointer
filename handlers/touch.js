@@ -177,6 +177,7 @@ define([
 					// (6) fire pointermove > pointerup > fast click > pointerout
 					utils.dispatchEvent(touchTarget, createPointer(utils.events.MOVE, e, touch, {}));
 					utils.dispatchEvent(touchTarget, createPointer(utils.events.UP, e, touch, {}));
+					e.preventDefault();
 					fireSyntheticClick(touchTarget, touch);
 					utils.dispatchEvent(touchTarget, createPointer(utils.events.OUT, e, touch, {}));
 					break;
@@ -186,6 +187,7 @@ define([
 					// fire synthetic click only if pointer is released on the origin element
 					// (touch.target is the target element from the touchstart)
 					if (elementFromPoint === touch.target) {
+						e.preventDefault();
 						fireSyntheticClick(touchTarget, touch);
 					}
 					utils.dispatchEvent(touchTarget, createPointer(utils.events.OUT, e, touch, {}));

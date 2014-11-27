@@ -48,7 +48,7 @@ _Manual_ master installation:
 - Programmatic: use *dpointer/events* function `setTouchAction(targetElement, actionType)`
 - Declarative: add the attribute `touch-action='<actiontype>'`
 
-Where actionType is `none`to disable the user agent default behavior. `pan-x` and `pan-y` have the same effect as `none` (see Limitations)
+Where actionType can be `none`, `pan-x`, `pan-y` or `auto`.
 
 ###Samples/tests
 To run the tests/samples you need to set [requirejs] and [domReady] as a sibling of the dpointer module like this:

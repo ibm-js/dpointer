@@ -12,5 +12,6 @@
 			"url": "https://github.com/ibm-js/dpointer/blob/master/LICENSE"
 		}
 	],
-	"bugs": "https://github.com/ibm-js/dpointer/issues"
+	"bugs": "https://github.com/ibm-js/dpointer/issues",
+	"private": true
 }

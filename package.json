@@ -1,6 +1,6 @@
 {
 	"name": "dpointer",
-	"version": "0.5.0",
+	"version": "0.5.1",
 	"devDependencies": {
 		"intern": "1.6.x",
 		"grunt": "~0.4.2",

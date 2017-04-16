@@ -342,6 +342,12 @@ define([
 	}
 
 	return {
+		
+		/**
+		 * @protected
+		 */
+		touchTracker: TouchTracker,
+
 		/**
 		 * register touch events handlers.
 		 *
@@ -404,5 +410,6 @@ define([
 		determineTouchAction: function (targetNode) {
 			return determineTouchActionFromAttr(targetNode);
 		}
+
 	};
 });

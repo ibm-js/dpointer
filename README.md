@@ -12,6 +12,7 @@ This API is a shim of the [W3C Pointer Events specification][W3C_pointer] and ad
 
 ##Supported environments
 The API has been successfully tested on the following environments.
+
 ###Mobile
 
 - Android 4.1.2+ (Stock browser and Chrome)
@@ -20,11 +21,15 @@ The API has been successfully tested on the following environments.
 - WindowsPhone 8.x
 
 ###Desktop
+
 - Chrome (mouse)
 - FireFox (mouse + touchscreen)
-- IE10+ (mouse + touchscreen)
+- IE11 (mouse + touchscreen)
+- Edge (mouse)
+- Safari (mouse)
 
 ## Dependencies
+
 This project can be integrated into any AMD capable javascript application.
 
 ## Installation

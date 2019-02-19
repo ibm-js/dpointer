@@ -5,9 +5,8 @@ define([
 	"./handlers/features",
 	"./handlers/utils",
 	"./handlers/touch",
-	"./handlers/mouse",
-	"./handlers/features!mspointer-events?./handlers/mspointer"
-], function (has, utils, touch, mouse, mspointer) {
+	"./handlers/mouse"
+], function (has, utils, touch, mouse) {
 	"use strict";
 
 	var pointerEvents = {_targetElement: null};
@@ -25,14 +24,10 @@ define([
 			return;// already initialized
 		}
 		if (!has("pointer-events")) {
-			if (has("mspointer-events")) {
-				mspointer.registerHandlers(targetElement);
+			if (has("touch-events") && has("touch-device")) {
+				touch.registerHandlers(targetElement);
 			} else {
-				if (has("touch-events") && has("touch-device")) {
-					touch.registerHandlers(targetElement);
-				} else {
-					mouse.registerHandlers(targetElement);
-				}
+				mouse.registerHandlers(targetElement);
 			}
 		}
 		this._targetElement = targetElement;
@@ -45,7 +40,6 @@ define([
 		if (this._targetElement) {
 			touch.deregisterHandlers(this._targetElement);
 			mouse.deregisterHandlers(this._targetElement);
-			mspointer && mspointer.deregisterHandlers(this._targetElement);
 		}
 		this._targetElement = null;
 	};
@@ -77,14 +71,10 @@ define([
 		if (has("pointer-events")) {
 			return targetElement.setPointerCapture(pointerId);// use native Pointer Events method
 		} else {
-			if (has("mspointer-events")) {
-				return targetElement.msSetPointerCapture(pointerId);// use native Pointer Events method
+			if (pointerId === 1) { // mouse always gets ID = 1
+				return mouse.setPointerCapture(targetElement);
 			} else {
-				if (pointerId === 1) { // mouse always gets ID = 1
-					return mouse.setPointerCapture(targetElement);
-				} else {
-					return touch.setPointerCapture(targetElement, pointerId);
-				}
+				return touch.setPointerCapture(targetElement, pointerId);
 			}
 		}
 	};
@@ -102,14 +92,10 @@ define([
 		if (has("pointer-events")) {
 			return targetElement.releasePointerCapture(pointerId);
 		} else {
-			if (has("mspointer-events")) {
-				return targetElement.msReleasePointerCapture(pointerId);
+			if (pointerId === 1) {
+				return mouse.releasePointerCapture(targetElement);
 			} else {
-				if (pointerId === 1) {
-					return mouse.releasePointerCapture(targetElement);
-				} else {
-					return touch.releasePointerCapture(targetElement, pointerId);
-				}
+				return touch.releasePointerCapture(targetElement, pointerId);
 			}
 		}
 	};
@@ -136,10 +122,6 @@ define([
 		insertTouchActionCSSRule("touch-action");
 	}
 
-		// CSS rule for IE10 and IE11 preview
-	if (has("mspointer-events")) {
-		insertTouchActionCSSRule("-ms-touch-action");
-	}
 	// CSS rule to map CSS attribute in case user agent has native support for touch-action or -ms-touch-action
 	// CSS property.
 	if (has("css-touch-action")) {

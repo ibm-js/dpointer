@@ -1,12 +1,11 @@
-define([
-	"intern!object",
-	"intern/chai!assert",
-	"dpointer/handlers/utils",
-	"../TestUtils"
-], function (registerSuite, assert, utils) {
+define(function (require) {
+	"use strict";
 
-	registerSuite({
-		name: "SyntheticPointer",
+	var registerSuite = intern.getPlugin("interface.object").registerSuite;
+	var assert = intern.getPlugin("chai").assert;
+	var utils = require("dpointer/handlers/utils");
+
+	registerSuite("SyntheticPointer", {
 		// create a synthetic pointer and check that properties are well defined and equal to expected values.
 		"check properties": function () {
 			if ("onpointerdown" in document) {

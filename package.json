@@ -2,9 +2,10 @@
 	"name": "dpointer",
 	"version": "0.5.2",
 	"devDependencies": {
-		"intern": "1.6.x",
+		"intern": "4.4.x",
 		"grunt": "~0.4.2",
-		"grunt-contrib-jshint": "~0.6.3"
+		"grunt-contrib-jshint": "~0.6.3",
+		"requirejs": "2.1.x"
 	},
 	"licenses": [
 		{

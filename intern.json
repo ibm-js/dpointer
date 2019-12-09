@@ -11,24 +11,16 @@
 
 	"leaveRemoteOpen": false,
 
-	"basePath": "../",
-
-	"node": {
+	"browser": {
 		"loader": {
 			"script": "./intern-requirejs-loader.js",
 			"options": {
-				"baseUrl": "."
-			}
-		}
-	},
-
-	"browser": {
-		"loader": {
-			"script": "dpointer/intern-requirejs-loader.js",
-			"options": {
-				"baseUrl": "../../..",
+				"baseUrl": "../../node_modules",
 				"packages": [
-					{ "name": "intern", "location": "dpointer/node_modules/intern" }
+					{
+						"name": "dpointer",
+						"location": ".."
+					}
 				]
 			}
 		}
@@ -52,7 +44,12 @@
 	],
 
 	"tunnelOptions": {
-		"drivers": [ "firefox", "internet explorer", "MicrosoftEdge" ]
+		"drivers": [
+			"firefox",
+			"internet explorer",
+			"MicrosoftEdge",
+			{"name": "chrome", "version": "78.0.3904.70" }
+		]
 	},
 
 	"WAIT_TIMEOUT": 30000,
@@ -231,6 +228,5 @@
 			],
 			"coverage": null
 		}
-
 	}
 }

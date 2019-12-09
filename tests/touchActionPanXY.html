@@ -9,7 +9,13 @@
 	<script src="../../requirejs/require.js"></script>
 	<script>
 		require.config({
-			baseUrl: "../.."
+			baseUrl: "../node_modules",
+			packages: [
+				{
+					name: "dpointer",
+					location: ".."
+				}
+			]
 		});
 		require([
 			"dpointer/events",

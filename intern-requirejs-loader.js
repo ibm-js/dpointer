@@ -15,7 +15,7 @@ intern.registerLoader(function (options) {
 	}
 
 	if (typeof window !== "undefined") {
-		return intern.loadScript("decor/node_modules/requirejs/require.js").then(function () {
+		return intern.loadScript("node_modules/requirejs/require.js").then(function () {
 			return initLoader(requirejs);
 		});
 	} else {

@@ -74,7 +74,13 @@
 
 	<script type="text/javascript">
 		require.config({
-			baseUrl: "../.."
+			baseUrl: "../node_modules",
+			packages: [
+				{
+					name: "dpointer",
+					location: ".."
+				}
+			]
 		});
 	</script>
 

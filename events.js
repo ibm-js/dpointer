@@ -117,20 +117,10 @@ define([
 		document.head.insertBefore(styleElement, document.head.firstChild);
 	}
 
-	// CSS rule when user agent implements W3C Pointer Events or when a polyfill is in place.
-	if (has("pointer-events")) {
+	// CSS rule when user agent implements W3C Pointer Events or when a polyfill is in place,
+	// or user agent has native support for touch-action.
+	if (has("pointer-events") || has("css-touch-action")) {
 		insertTouchActionCSSRule("touch-action");
-	}
-
-	// CSS rule to map CSS attribute in case user agent has native support for touch-action or -ms-touch-action
-	// CSS property.
-	if (has("css-touch-action")) {
-		insertTouchActionCSSRule("touch-action");
-	} else {
-		// CSS rule for IE10 and IE11 preview
-		if (has("css-ms-touch-action")) {
-			insertTouchActionCSSRule("-ms-touch-action");
-		}
 	}
 
 	// start listening to native events

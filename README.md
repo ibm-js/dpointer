@@ -5,7 +5,7 @@ This project proposes a unified and consistent javascript events API which aims 
 This API is a shim of the [W3C Pointer Events specification][W3C_pointer] and adds features that are out of scope of the current specification.
 
 - Generates **Pointer Events** according to the current specification.
-- Use attribute `touch-action` to set touch action on HTML elements; generates `touch-action` and `ms-touch-action` CSS properties when supported by the browser.
+- Use attribute `touch-action` to set touch action on HTML elements; generates `touch-action` CSS properties when supported by the browser.
 - Support **Pointer Capture** with mouse and touch events.
 - Normalize **click** (Tap) events, **double click** (double Tap) events, and event **button/buttons/which** values.
 - Supports immediate clicks (no ~300ms delay) 

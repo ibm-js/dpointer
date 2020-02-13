@@ -1,5 +1,5 @@
 /**
- * 
+ * Feature detection tests.
  */
 define([
 	"requirejs-dplugins/has"
@@ -7,9 +7,14 @@ define([
 	if (typeof document !== "undefined") {
 		has.add("touch-events", "ontouchstart" in document); // UA supports Touch Events
 		has.add("pointer-events", "onpointerdown" in document); // UA supports Pointer Events
-		has.add("touch-device", /(mobile)|(android)/i.test(navigator.userAgent)); // mobile device
-		has.add("css-touch-action", "touchAction" in document.body.style);// touch-action CSS
-		has.add("css-ms-touch-action", "msTouchAction" in document.body.style);// -ms-touch-action CSS
+
+		// Mobile device
+		// Special test for iOS 13.1+, to counteract misleading userAgent string.
+		var ios13 = /Safari/.test(navigator.userAgent) && "ontouchstart" in document;
+		has.add("touch-device", /(mobile)|(android)/i.test(navigator.userAgent) || ios13); // mobile device
+
+		has.add("css-touch-action", "touchAction" in document.createElement("div").style);
 	}
+
 	return has;
 });

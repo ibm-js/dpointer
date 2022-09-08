@@ -11,7 +11,7 @@
 		"requirejs-dplugins": "0.6.x"
 	},
 	"devDependencies": {
-		"intern": "4.4.x",
+		"intern": "4.10.x",
 		"grunt": "~1.5.2",
 		"grunt-contrib-jshint": "~0.6.3",
 		"requirejs": "2.1.x",

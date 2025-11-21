@@ -14,7 +14,7 @@
 		"intern": "4.10.x",
 		"grunt": "~1.5.2",
 		"grunt-contrib-jshint": "~3.2.0",
-		"requirejs": "2.1.x",
+		"requirejs": "2.3.x",
 		"requirejs-domready": "2.0.x"
 	},
 	"licenses": [
